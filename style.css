@@ -34,7 +34,8 @@ body::-webkit-scrollbar {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: 50;
+    /* Ensure this is firmly on top of the wrapper (z-index: 1) */
     pointer-events: none;
     /* Let scroll events pass through unless we need interaction */
 }
@@ -88,19 +89,53 @@ h3 {
 }
 
 /* Glass UI */
+/* Glass UI */
 .glass-nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 2rem 4rem;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 1200px;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 10;
-    mix-blend-mode: difference;
-    /* Makes it visible on light/dark */
+    z-index: 100;
+    /* Higher than canvas (50) */
+
+    /* Premium Glass Capsule */
+    background: rgba(255, 255, 255, 0.05);
+    /* Very subtle fill */
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 100px;
+    /* Pill shape */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+
     color: white;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    /* Ultra smooth premium easing */
+}
+
+.glass-nav.scrolled {
+    width: 60%;
+    /* Shrinks to a tighter pill */
+    padding: 0.8rem 2rem;
+    background: rgba(255, 255, 255, 0.08);
+    /* Slightly more visible background when small */
+    backdrop-filter: blur(20px) saturate(200%);
+    -webkit-backdrop-filter: blur(20px) saturate(200%);
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.3);
+}
+
+.glass-nav:hover {
+    width: 90%;
+    /* Expands back on hover for accessibility */
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
 .logo {
@@ -187,4 +222,144 @@ footer {
     font-size: 0.8rem;
     opacity: 0.5;
     background: black;
+}
+
+/* Highlight Section (Mascot Showcase) */
+.highlight-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5%;
+    /* Premium Red Gradient from Reference */
+    background: radial-gradient(circle at 50% 50%, #8a1c1c 0%, #4a0808 100%);
+    overflow: hidden;
+}
+
+.highlight-container {
+    width: 100%;
+    max-width: 1400px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    position: relative;
+    z-index: 5;
+}
+
+.highlight-text-col {
+    flex: 1;
+    max-width: 600px;
+    z-index: 2;
+    text-align: left;
+    padding-right: 2rem;
+}
+
+.highlight-spacer-col {
+    flex: 1;
+    height: 600px;
+    /* Increased height for bigger model area */
+    pointer-events: none;
+}
+
+.mascot-pre-title {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: 500;
+}
+
+.christmas-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(5rem, 10vw, 8rem);
+    line-height: 1.1;
+    color: #fff;
+    margin-left: -10px;
+    /* Aligns script font visual weight */
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    animation: fadeInUp 1s ease-out 0.5s forwards;
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.christmas-subtitle {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--color-gold);
+    margin-bottom: 2rem;
+    font-weight: 700;
+}
+
+.mascot-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2.5rem;
+    max-width: 90%;
+    font-weight: 300;
+}
+
+.premium-btn {
+    display: inline-block;
+    padding: 1rem 3.5rem;
+    background: #fff;
+    color: #8a1c1c;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.premium-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    background: var(--color-gold);
+    color: #fff;
+}
+
+.mascot-glow-bg {
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
+    z-index: 1;
+    filter: blur(80px);
+    pointer-events: none;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) rotate(-2deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+@keyframes glowPulse {
+    from {
+        opacity: 0.4;
+        transform: translate(-50%, -50%) scale(0.9);
+    }
+
+    to {
+        opacity: 0.7;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
 }

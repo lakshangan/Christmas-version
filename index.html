@@ -1,59 +1,169 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpenLedger | Holiday 2025</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <canvas id="webgl-canvas"></canvas>
-    <div id="main-wrapper">
-      <!-- Content will be injected dynamically or placed here -->
-      <nav class="glass-nav">
-        <div class="logo">OPENLEDGER</div>
-        <div class="nav-links">
-          <a href="#">Vision</a>
-          <a href="#">Technology</a>
-          <a href="#">Holiday</a>
-        </div>
-      </nav>
-      
-      <section class="hero-section" id="hero">
-        <div class="hero-content">
-          <h1 class="cinematic-title">The <span class="gold-text">Truth</span> of <br> Winter</h1>
-          <p class="hero-subtitle">Experience the data lineage of the season.</p>
-        </div>
-      </section>
 
-      <section class="beam-section" id="truth-beam">
-        <div class="content-block right">
-          <h2>The Glowing Beam</h2>
-          <p>Illuminating the path of verifiable data through the winter night.</p>
-        </div>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenLedger | Holiday 2025</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet">
+  <style>
+    /* Critical Preloader Styles */
+    #preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #03080f;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+    }
 
-      <section class="forest-section" id="crystal-trees">
-        <div class="content-block left">
-          <h2>Crystal Structure</h2>
-          <p>Every branch a transaction, every leaf a verified proof.</p>
-        </div>
-      </section>
+    .preloader-content {
+      position: relative;
+      text-align: center;
+      overflow: hidden;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
 
-      <section class="gift-section" id="gift-reveal">
-        <div class="center-content">
-          <h2>Your Gift Awaits</h2>
-          <p>Unwrap the future of decentralized AI.</p>
-        </div>
-      </section>
+    .loader-text {
+      font-family: 'Playfair Display', serif;
+      color: #e0e6ed;
+      font-size: 2rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeIn 1s ease-out forwards;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
 
-      <footer class="footer">
-        <p>&copy; 2025 OpenLedger. Built with festive precision.</p>
-      </footer>
+    /* Massive White Flash Overlay */
+    .flash-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      opacity: 0;
+      z-index: 5;
+      pointer-events: none;
+      /* Flash culminates right before JS fades the preloader out (~2s) */
+      animation: flash-bang 2.2s cubic-bezier(0.6, 0, 0.4, 1) forwards;
+    }
+
+    @keyframes textFadeIn {
+      to {
+        opacity: 1;
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes flash-bang {
+
+      0%,
+      75% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Hide scrollbar during load */
+    body.loading {
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body class="loading">
+  <div id="preloader">
+    <div class="preloader-content">
+      <div class="loader-text">OpenLedger</div>
     </div>
-    <script type="module" src="/main.js"></script>
-  </body>
+    <div class="flash-overlay"></div>
+  </div>
+  <canvas id="webgl-canvas"></canvas>
+  <div id="main-wrapper">
+    <!-- Content will be injected dynamically or placed here -->
+    <nav class="glass-nav">
+      <div class="logo">OPENLEDGER</div>
+      <div class="nav-links">
+        <a href="#">Vision</a>
+        <a href="#">Technology</a>
+        <a href="#">Holiday</a>
+      </div>
+    </nav>
+
+    <section class="highlight-section" id="mascot-highlight">
+      <div class="mascot-glow-bg"></div>
+      <div class="highlight-container">
+        <div class="highlight-text-col">
+          <span class="mascot-pre-title">MERRY</span>
+          <h2 class="christmas-title">Christmas</h2>
+          <p class="christmas-subtitle">& HAPPY NEW YEAR</p>
+          <p class="mascot-description">
+            Celebrate the season with the future of fair AI. OpenLedger delivers trust, transparency, and joy this
+            holiday.
+          </p>
+          <a href="#hero" class="premium-btn">Join The Event</a>
+        </div>
+        <div class="highlight-spacer-col">
+          <!-- 3D Model sits here visually -->
+        </div>
+      </div>
+    </section>
+
+    <section class="hero-section" id="hero">
+      <div class="hero-content">
+        <h1 class="cinematic-title">The <span class="gold-text">Truth</span> of <br> Winter</h1>
+        <p class="hero-subtitle">Experience the data lineage of the season.</p>
+      </div>
+    </section>
+
+    <section class="beam-section" id="truth-beam">
+      <div class="content-block right">
+        <h2>The Glowing Beam</h2>
+        <p>Illuminating the path of verifiable data through the winter night.</p>
+      </div>
+    </section>
+
+    <section class="forest-section" id="crystal-trees">
+      <div class="content-block left">
+        <h2>Crystal Structure</h2>
+        <p>Every branch a transaction, every leaf a verified proof.</p>
+      </div>
+    </section>
+
+    <section class="gift-section" id="gift-reveal">
+      <div class="center-content">
+        <h2>Your Gift Awaits</h2>
+        <p>Unwrap the future of decentralized AI.</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>&copy; 2025 OpenLedger. Built with festive precision.</p>
+    </footer>
+  </div>
+  <script type="module" src="/main.js"></script>
+</body>
+
 </html>

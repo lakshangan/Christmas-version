@@ -1,4 +1,5 @@
 import './style.css';
+import './preloader.js';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import gsap from 'gsap';
@@ -28,11 +29,11 @@ const CONFIG = {
 // --- Scene Setup ---
 const canvas = document.querySelector('#webgl-canvas');
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(CONFIG.colors.bg);
-scene.fog = new THREE.FogExp2(CONFIG.colors.bg, 0.02);
+// scene.background = new THREE.Color(CONFIG.colors.bg); // Removed to allow CSS background
+// scene.fog = new THREE.FogExp2(CONFIG.colors.bg, 0.02); // Removed fog to keep red background clean
 
 const camera = new THREE.PerspectiveCamera(CONFIG.camera.fov, window.innerWidth / window.innerHeight, CONFIG.camera.near, CONFIG.camera.far);
-camera.position.set(0, 2, 8);
+camera.position.set(0, 2, 8); // Standard centered starting position
 
 const renderer = new THREE.WebGLRenderer({
     canvas,
@@ -45,8 +46,12 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 // --- Lighting ---
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+const ambientLight = new THREE.AmbientLight(0xffffff, 2.0); // Boosted Ambient
 scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight(0xffffff, 3.0); // Strong White Light
+dirLight.position.set(0, 5, 10);
+scene.add(dirLight);
 
 const mainLight = new THREE.SpotLight(CONFIG.colors.gold, 3);
 mainLight.position.set(5, 10, 5);
@@ -61,7 +66,8 @@ scene.add(blueBackLight);
 
 // --- Objects ---
 
-// 1. Reflective Floor (Ice Lake)
+// 1. Reflective Floor (Ice Lake) - REMOVED for clean CSS background integration
+/*
 const outputPlane = new THREE.Mesh(
     new THREE.PlaneGeometry(200, 200),
     new THREE.MeshStandardMaterial({
@@ -73,6 +79,7 @@ const outputPlane = new THREE.Mesh(
 outputPlane.rotation.x = -Math.PI / 2;
 outputPlane.receiveShadow = true;
 scene.add(outputPlane);
+*/
 
 // 2. Global Particles (Snow)
 const particlesGeometry = new THREE.BufferGeometry();
@@ -110,9 +117,9 @@ loader.load('/santa_sleigh.glb', (gltf) => {
     santaModel.position.y += (santaModel.position.y - center.y);
     santaModel.position.z += (santaModel.position.z - center.z);
 
-    // Normalize scale to fit roughly in 2-3 units
+    // Normalize scale to fit roughly in 7 units (Increased size per user request)
     const maxDim = Math.max(size.x, size.y, size.z);
-    const scaleFactor = 3 / maxDim;
+    const scaleFactor = 7 / maxDim;
     santaModel.scale.setScalar(scaleFactor);
 
     santaModel.traverse((node) => {
@@ -121,8 +128,9 @@ loader.load('/santa_sleigh.glb', (gltf) => {
             node.receiveShadow = true;
             // Enhance materials for premium look
             if (node.material) {
-                node.material.metalness = 0.3;
+                // node.material.metalness = 0.3; // Removed to prevent darkness
                 node.material.roughness = 0.4;
+                node.material.emissiveIntensity = 0.2; // Self-illuminate slightly
             }
         }
     });
@@ -135,7 +143,8 @@ loader.load('/santa_sleigh.glb', (gltf) => {
     heroGroup.add(sphere);
 });
 
-// Add orbital rings to Hero (keep these for abstract tech feel)
+// Add orbital rings to Hero (keep these for abstract tech feel) - REMOVED per user request
+/*
 const ringGeo = new THREE.TorusGeometry(2, 0.02, 16, 100);
 const ringMat = new THREE.MeshBasicMaterial({ color: CONFIG.colors.gold, transparent: true, opacity: 0.5 });
 const ring1 = new THREE.Mesh(ringGeo, ringMat);
@@ -144,14 +153,39 @@ ring1.rotation.x = Math.PI / 2 + 0.2;
 ring2.rotation.y = Math.PI / 2 + 0.2;
 heroGroup.add(ring1);
 heroGroup.add(ring2);
+*/
 
-heroGroup.position.set(0, 2, 0);
+// Background Highlight for Mascot (Enhanced)
+// Background Highlight for Mascot (Enhanced)
+const highlightGroup = new THREE.Group();
+
+// Removed Gold Halo per user request for a cleaner look
+
+// Blue Rim Light for contrast (Kept for clarity)
+const rimLight = new THREE.SpotLight(0x44aaff, 10);
+rimLight.position.set(-5, 5, -5);
+rimLight.lookAt(0, 0, 0);
+heroGroup.add(rimLight);
+
+const highlightSpot = new THREE.SpotLight(0xffffff, 8); // White spot
+highlightSpot.position.set(0, 5, 5);
+highlightSpot.angle = 0.6;
+highlightSpot.penumbra = 0.5;
+highlightSpot.distance = 50;
+highlightGroup.add(highlightSpot);
+
+heroGroup.add(highlightGroup);
+
+// Place on RIGHT side initially - ALIGNED with Nav Items (Vision/Tech)
+heroGroup.position.set(3.2, 1.5, 0); // Moved Up
+heroGroup.rotation.set(0.1, -1.0, 0); // Semi right side view (3/4 angle)
 scene.add(heroGroup);
 
 
-// B. The Truth Beam (With Data Stream)
+// B. The Truth Beam (With Data Stream) - REMOVED "Blue Line" per user request
 const beamGroup = new THREE.Group();
 // Main beam
+/*
 const beamMesh = new THREE.Mesh(
     new THREE.CylinderGeometry(0.2, 0.2, 30, 32),
     new THREE.MeshBasicMaterial({ color: CONFIG.colors.beam, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending })
@@ -164,8 +198,10 @@ const outerBeamMesh = new THREE.Mesh(
     new THREE.MeshBasicMaterial({ color: CONFIG.colors.beam, transparent: true, opacity: 0.05, side: THREE.DoubleSide, blending: THREE.AdditiveBlending })
 );
 beamGroup.add(outerBeamMesh);
+*/
 
-// Data Particles (Floating Blocks)
+// Data Particles (Floating Blocks) - REMOVED per user request
+/*
 const dataInstances = 50;
 const dataGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
 const dataMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -182,12 +218,14 @@ for (let i = 0; i < dataInstances; i++) {
     dataBlocks.setMatrixAt(i, dummy.matrix);
 }
 beamGroup.add(dataBlocks);
+*/
 
 beamGroup.position.set(0, 10, -25);
 scene.add(beamGroup);
 
 
-// C. Crystal Forest
+// C. Crystal Forest - REMOVED per user request
+/*
 const forestGroup = new THREE.Group();
 const treeGeo = new THREE.ConeGeometry(0.6, 2.5, 4);
 const treeMat = new THREE.MeshPhysicalMaterial({
@@ -213,6 +251,7 @@ for (let i = 0; i < 15; i++) {
 }
 forestGroup.position.set(15, 0, 5);
 scene.add(forestGroup);
+*/
 
 
 // D. Gift Box
@@ -263,8 +302,34 @@ const tl = gsap.timeline({
         start: "top top",
         end: "bottom bottom",
         scrub: 1.5,
+        // snap: 1 / 4 // Optional: snap to sections
     }
 });
+
+// Scene 0: Mascot -> Hero (Right to Center)
+// Move Sleigh from Right to Center
+tl.to(heroGroup.position, {
+    x: 0,
+    y: 0.0,
+    z: 1, // Bring closer
+    duration: 1.5,
+    ease: "power2.inOut"
+}, "scene0")
+    .to(heroGroup.rotation, {
+        x: 0,
+        y: 0.2, // Face front-right gently
+        z: 0,
+        duration: 1.5,
+        ease: "power2.inOut"
+    }, "scene0")
+    // Ensure camera looks solid
+    .to(camera.position, {
+        x: 0,
+        y: 2,
+        z: 9,
+        duration: 1.5,
+        ease: "power2.inOut"
+    }, "scene0");
 
 // Scene 1: Hero -> Beam
 // Beam is at (0, 10, -25)
@@ -281,6 +346,13 @@ tl.to(camera.position, {
         z: -25,
         duration: 1.5,
         ease: "power2.inOut"
+    }, "scene1")
+    // Hide Mascot Highlight as we move away
+    .to(highlightGroup.scale, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: 0.5
     }, "scene1");
 
 // Scene 2: Beam -> Forest
@@ -356,15 +428,14 @@ function animate(time) {
     if (heroGroup) {
         // If santaModel exists, maybe float it slightly
         if (santaModel) {
-            santaModel.rotation.y = Math.sin(t * 0.5) * 0.1;
-            santaModel.position.y = Math.sin(t) * 0.1;
+            // Subtle "alive" movement
+            santaModel.rotation.y = Math.sin(t * 0.5) * 0.1; // Gentle Yaw (Looking around)
+            santaModel.position.y = Math.sin(t) * 0.1; // Float up/down relative to group center
         }
-        // Rings rotation
-        ring1.rotation.y += 0.002;
-        ring2.rotation.x += 0.002;
     }
 
-    // Data Beam Animation (Instanced)
+    // Data Beam Animation (Instanced) - REMOVED
+    /*
     // Move blocks up
     for (let i = 0; i < dataInstances; i++) {
         dataBlocks.getMatrixAt(i, dummy.matrix);
@@ -377,6 +448,7 @@ function animate(time) {
         dataBlocks.setMatrixAt(i, dummy.matrix);
     }
     dataBlocks.instanceMatrix.needsUpdate = true;
+    */
 
     // Particles
     particlesMesh.rotation.y = t * 0.05;
@@ -386,3 +458,15 @@ function animate(time) {
     requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
+
+// --- Navbar Scroll Logic ---
+const nav = document.querySelector('.glass-nav');
+if (nav) {
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    });
+}
