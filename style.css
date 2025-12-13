@@ -17,11 +17,45 @@
 
 body {
     font-family: var(--font-body);
-    background-color: var(--color-bg);
+    /* Deep Winter Sky Base */
+    background-color: #020b14;
+    /* Aurora Borealis Effect using multiple gradients */
+    background-image:
+        radial-gradient(circle at 50% 0%, #002211, transparent 60%),
+        /* Green glow top */
+        radial-gradient(circle at 0% 50%, #1a0505, transparent 50%),
+        /* Red hint left */
+        radial-gradient(circle at 100% 80%, #0a0a2a, transparent 50%),
+        /* Blue deep right */
+        radial-gradient(circle at 80% 20%, #001f0f, transparent 40%);
+    /* Subtle green right */
+    background-size: 200% 200%;
+    animation: auroraShift 15s ease-in-out infinite alternate;
     color: var(--color-text);
     overflow-x: hidden;
-    /* Hide scrollbar for custom smooth scroll feel */
     scrollbar-width: none;
+}
+
+@keyframes auroraShift {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    25% {
+        background-position: 50% 20%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    75% {
+        background-position: 50% 80%;
+    }
+
+    100% {
+        background-position: 0% 100%;
+    }
 }
 
 body::-webkit-scrollbar {
@@ -46,6 +80,7 @@ body::-webkit-scrollbar {
 }
 
 /* Full Screen Transition Curtains */
+/* Full Screen Transition Curtains */
 .transition-curtain {
     position: fixed;
     top: 0;
@@ -55,20 +90,42 @@ body::-webkit-scrollbar {
     transform: scaleX(0);
     pointer-events: none;
     will-change: transform;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    /* Depth shadow */
+}
+
+/* Add inner gold border to curtains where they meet */
+.curtain-left::after,
+.curtain-right::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 5px;
+    background: linear-gradient(to bottom, #d4af37, #f9e58b, #d4af37);
+    box-shadow: 0 0 15px #d4af37;
 }
 
 .curtain-left {
     left: 0;
-    background: #8a0000;
-    /* Deep Christmas Red */
+    /* Rich Red with texture/gradient */
+    background: linear-gradient(135deg, #8a0000 0%, #5c0000 100%);
     transform-origin: left;
+}
+
+.curtain-left::after {
+    right: 0;
 }
 
 .curtain-right {
     right: 0;
-    background: #004d00;
-    /* Deep Christmas Green */
+    /* Rich Green with texture/gradient */
+    background: linear-gradient(-135deg, #004d00 0%, #002900 100%);
     transform-origin: right;
+}
+
+.curtain-right::after {
+    left: 0;
 }
 
 /* Typography */
@@ -351,6 +408,97 @@ footer {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
     background: var(--color-gold);
     color: #fff;
+}
+
+/* Santa Letter Styles */
+.santa-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 90%;
+    max-width: 500px;
+    background: #fff;
+    /* Paper white */
+    color: #333;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+    /* Gold glow */
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 30;
+    font-family: 'Playfair Display', serif;
+    /* Classic font */
+    border: 5px solid #8a0000;
+    /* Red Border */
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.santa-card.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+}
+
+.santa-header h3 {
+    color: #8a0000;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.santa-icon {
+    font-size: 3rem;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.santa-body {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+#close-letter {
+    background: #004d00;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background 0.3s;
+}
+
+#close-letter:hover {
+    background: #006600;
+}
+
+.instruction-text {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    opacity: 0.7;
+    margin-top: 1rem;
+    animation: pulseText 2s infinite;
+}
+
+@keyframes pulseText {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }
 
 .mascot-glow-bg {

@@ -81,25 +81,86 @@ outputPlane.receiveShadow = true;
 scene.add(outputPlane);
 */
 
-// 2. Global Particles (Snow)
+// 2. Global Particles (Dense Christmas Snow)
 const particlesGeometry = new THREE.BufferGeometry();
-const particlesCount = 3000;
+const particlesCount = 5000; // More snow
 const posArray = new Float32Array(particlesCount * 3);
 for (let i = 0; i < particlesCount * 3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 60;
+    // Spread them wider and taller
+    posArray[i] = (Math.random() - 0.5) * 100;
 }
 particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.08,
-    color: CONFIG.colors.silver,
+    size: 0.1, // Larger flakes
+    color: 0xffffff, // Pure white snow
     transparent: true,
-    opacity: 0.6,
+    opacity: 0.8,
+    map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/sprites/snowflake1.png'), // Try to load a sprite if possible, or fallback to square
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+});
+// Since we don't have local texture, let's stick to simple square/circle points but make them soft
+const softSnowMat = new THREE.PointsMaterial({
+    size: 0.15,
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.7,
     blending: THREE.AdditiveBlending
 });
-const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+
+const particlesMesh = new THREE.Points(particlesGeometry, softSnowMat);
 scene.add(particlesMesh);
 
-// 3. Narrative Objects
+// 3. Magic Dust (Twinkling floating particles)
+const dustGeo = new THREE.BufferGeometry();
+const dustCount = 2000;
+const dustPos = new Float32Array(dustCount * 3);
+for (let i = 0; i < dustCount * 3; i++) {
+    dustPos[i] = (Math.random() - 0.5) * 80;
+}
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+const dustMat = new THREE.PointsMaterial({
+    size: 0.05,
+    color: 0xffd700, // Gold dust
+    transparent: true,
+    opacity: 0.5,
+    blending: THREE.AdditiveBlending
+});
+const dustMesh = new THREE.Points(dustGeo, dustMat);
+scene.add(dustMesh);
+
+// 4. Atmosphere Fog (Subtle Volumetric Glow)
+// Large sphere with inverse faces or just localized?
+// Let's use a sprite or a simple giant plane with a gradient texture for depth if needed.
+// For now, let's stick to particles as the CSS handles the gradient nicely.
+// We can add "Stars" way in the back.
+const starsGeo = new THREE.BufferGeometry();
+const starsCount = 1000;
+const starsPos = new Float32Array(starsCount * 3);
+for (let i = 0; i < starsCount * 3; i++) {
+    const r = 200; // Far away
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
+
+    // Fix: Float32Array does not support push. Use index assignment.
+    starsPos[i * 3] = x;
+    starsPos[i * 3 + 1] = y;
+    starsPos[i * 3 + 2] = z;
+}
+starsGeo.setAttribute('position', new THREE.Float32BufferAttribute(starsPos, 3));
+const starsMat = new THREE.PointsMaterial({
+    color: 0xffffff,
+    size: 0.5,
+    transparent: true,
+    opacity: 0.8
+});
+const starsMesh = new THREE.Points(starsGeo, starsMat);
+scene.add(starsMesh);
+
+// 5. Narrative Objects
 // Loading Manager for Preloader
 const loadingManager = new THREE.LoadingManager();
 const preloader = document.querySelector('#preloader');
@@ -355,44 +416,132 @@ forgeGroup.position.set(20, 2, -5);
 scene.add(forgeGroup);
 
 
-// D. Gift Box (Premium Procedural)
+// D. The Santa Gift (GLB Model)
 const giftGroup = new THREE.Group();
+let giftModel;
+let isGiftOpen = false;
 
-// Main Box
-const boxGeo = new THREE.BoxGeometry(2, 2, 2);
-const boxMat = new THREE.MeshStandardMaterial({
-    color: 0xaa0000, // Rich Red
-    roughness: 0.1, // Shiny
-    metalness: 0.6,
-    envMapIntensity: 1.5
+// Load Gift Box GLB
+loader.load('/Gift Box.glb', (gltf) => {
+    giftModel = gltf.scene;
+
+    // Auto-center and scale
+    const box = new THREE.Box3().setFromObject(giftModel);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+
+    giftModel.position.sub(center);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scaleFactor = 3 / maxDim; // Size it to ~3 units
+    giftModel.scale.setScalar(scaleFactor);
+
+    giftModel.traverse((node) => {
+        if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+            node.material.envMapIntensity = 2; // Shiny
+            node.material.roughness = 0.2;
+            node.material.metalness = 0.6;
+        }
+    });
+
+    giftGroup.add(giftModel);
+}, undefined, (error) => {
+    console.error("Error loading Gift Box:", error);
+    // Fallback Red Box
+    const box = new THREE.Mesh(
+        new THREE.BoxGeometry(2, 2, 2),
+        new THREE.MeshStandardMaterial({ color: 0xff0000 })
+    );
+    giftGroup.add(box);
 });
-const giftBox = new THREE.Mesh(boxGeo, boxMat);
-giftGroup.add(giftBox);
 
-// Ribbons (Torus cross)
-const ribbonMat = new THREE.MeshStandardMaterial({
-    color: 0xd4af37, // Gold
-    roughness: 0.2,
-    metalness: 1.0
-});
-const rib1 = new THREE.Mesh(new THREE.BoxGeometry(2.05, 2.05, 0.4), ribbonMat);
-const rib2 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 2.05, 2.05), ribbonMat);
-giftGroup.add(rib1);
-giftGroup.add(rib2);
-
-// Bow (Spheres/Torus)
-const bowGeo = new THREE.TorusKnotGeometry(0.5, 0.1, 64, 8);
-const bow = new THREE.Mesh(bowGeo, ribbonMat);
-bow.position.y = 1.2;
-giftGroup.add(bow);
-
-// Inner Light (For Atmosphere)
-const innerLight = new THREE.PointLight(CONFIG.colors.giftInside, 0, 8);
-innerLight.position.set(0, 0, 0);
-giftGroup.add(innerLight);
+// Inner Light (Hidden initially)
+const internalLight = new THREE.PointLight(0xffd700, 0, 5);
+internalLight.position.set(0, 0, 0);
+giftGroup.add(internalLight);
 
 giftGroup.position.set(-15, 0.75, -5);
 scene.add(giftGroup);
+
+
+// --- Interaction Logic (Santa Gift) ---
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener('click', onDocClick);
+
+// Close button logic
+const closeBtn = document.getElementById('close-letter');
+if (closeBtn) {
+    closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent re-triggering raycast if overlay overlaps canvas click
+        closeGift();
+    });
+}
+
+function onDocClick(event) {
+    // Raycast only works if giftGroup is visible/near
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(giftGroup.children, true);
+
+    if (intersects.length > 0 && !isGiftOpen) {
+        openGift();
+    }
+}
+
+function openGift() {
+    isGiftOpen = true;
+
+    // 1. Camera Move (Full Screen Focus)
+    // Zoom extremely close to center of gift, or slightly above
+    gsap.to(camera.position, {
+        x: -15,
+        y: 2,
+        z: -2, // Very close
+        duration: 1.5,
+        ease: "power2.inOut"
+    });
+    gsap.to(cameraTarget, {
+        x: -15, y: 1, z: -5,
+        duration: 1.5
+    });
+
+    // 2. Gift Animation (Float up and spin fast like opening)
+    gsap.to(giftGroup.position, { y: 2, duration: 1, ease: "back.out" });
+    gsap.to(giftGroup.rotation, { y: Math.PI * 4, duration: 2, ease: "power2.inOut" });
+
+    // 3. Light Burst
+    gsap.to(internalLight, { intensity: 10, duration: 0.5, yoyo: true, repeat: 1, delay: 1 });
+
+    // 4. Show Letter Overlay
+    setTimeout(() => {
+        const letter = document.getElementById('santa-letter');
+        const hint = document.getElementById('santa-instruction');
+        if (letter) letter.classList.add('active');
+        if (hint) hint.style.opacity = 0;
+    }, 1200);
+}
+
+function closeGift() {
+    isGiftOpen = false;
+
+    // 1. Hide Letter
+    const letter = document.getElementById('santa-letter');
+    const hint = document.getElementById('santa-instruction');
+    if (letter) letter.classList.remove('active');
+    if (hint) hint.style.opacity = 1;
+
+    // 2. Reset Gift
+    gsap.to(giftGroup.position, { y: 0.75, duration: 1, ease: "power2.out" });
+
+    // 3. Reset Camera (Back to Scene 3 view)
+    gsap.to(camera.position, { x: -12, y: 0.75, z: 0, duration: 1.5 });
+    gsap.to(cameraTarget, { x: -15, y: 0.75, z: -5, duration: 1.5 });
+}
 
 
 // --- Scroll / Animation ---
@@ -537,23 +686,7 @@ tl.to(camera.position, {
         z: -5,
         duration: 1.5,
         ease: "power2.inOut"
-    }, "scene3")
-    // Open Gift (Float & Glow since we can't guarantee lid structure)
-    .to(giftGroup.position, {
-        y: 1.5,
-        duration: 1,
-        ease: "power2.inOut"
-    }, "scene3+=0.5")
-    .to(giftGroup.rotation, {
-        y: Math.PI * 2,
-        duration: 2,
-        ease: "power1.inOut"
-    }, "scene3+=0.5")
-    .to(innerLight, {
-        intensity: 8,
-        distance: 10,
-        duration: 1
-    }, "scene3+=0.5");
+    }, "scene3");
 
 
 // --- Window Resize ---
@@ -607,6 +740,15 @@ function animate(time) {
 
     // Particles
     particlesMesh.rotation.y = t * 0.05;
+    // Magic Dust Float
+    if (dustMesh) {
+        dustMesh.rotation.y = -t * 0.02;
+        dustMesh.position.y = Math.sin(t * 0.5) * 2;
+    }
+    // Stars don't move (or very slowly)
+    if (starsMesh) {
+        starsMesh.rotation.y = t * 0.005;
+    }
 
     // Crystal Orb Animation
     if (crystalGroup) {
@@ -617,9 +759,12 @@ function animate(time) {
         }
     }
 
-    // Gift Animation
+    // Gift Animation (Idle Float)
     if (giftGroup) {
         giftGroup.position.y = 0.75 + Math.sin(t * 1) * 0.1;
+        if (!isGiftOpen) {
+            giftGroup.rotation.y = t * 0.2; // Slow rotate idle
+        }
     }
 
     // Forge Animation
