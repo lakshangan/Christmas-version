@@ -1,0 +1,98 @@
+/* Cinematic Preloader */
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #000;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.loader-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    mix-blend-mode: overlay;
+    /* Blends with the beam */
+}
+
+.loader-title {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    color: #fff;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.shimmer-text {
+    background: linear-gradient(45deg, #222 0%, #fff 50%, #222 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -100% 0;
+    }
+
+    100% {
+        background-position: 100% 0;
+    }
+}
+
+.loader-subtitle {
+    font-family: var(--font-body);
+    color: var(--color-gold);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    margin-top: 1rem;
+    opacity: 0.8;
+}
+
+/* The Beam Animation Structure */
+.beam-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.beam-core {
+    position: absolute;
+    width: 2px;
+    height: 0%;
+    /* Grows during load */
+    background: #fff;
+    box-shadow:
+        0 0 10px #fff,
+        0 0 20px #4fc3f7,
+        0 0 40px #4fc3f7;
+    z-index: 5;
+}
+
+.beam-flare {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(79, 195, 247, 0) 70%);
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 6;
+    mix-blend-mode: screen;
+}

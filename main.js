@@ -1,5 +1,5 @@
 import './style.css';
-import './preloader.js';
+// import './preloader.js'; // Handled in main.js now
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import gsap from 'gsap';
@@ -100,11 +100,46 @@ const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
 scene.add(particlesMesh);
 
 // 3. Narrative Objects
+// Loading Manager for Preloader
+const loadingManager = new THREE.LoadingManager();
+const preloader = document.querySelector('#preloader');
+const beamCore = document.querySelector('.beam-core');
+const beamFlare = document.querySelector('.beam-flare');
+const loaderContent = document.querySelector('.loader-content');
+
+loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
+    const progressRatio = itemsLoaded / itemsTotal;
+    if (beamCore) {
+        gsap.to(beamCore, {
+            height: progressRatio * 100 + '%',
+            duration: 0.5,
+            ease: "power2.out"
+        });
+    }
+};
+
+loadingManager.onLoad = () => {
+    const tl = gsap.timeline({
+        onComplete: () => {
+            if (preloader) preloader.style.display = 'none';
+        }
+    });
+
+    if (loaderContent && beamCore && beamFlare && preloader) {
+        tl.to(loaderContent, { opacity: 0, duration: 0.5 })
+            .to(beamCore, { width: '100%', duration: 0.8, ease: "power4.inOut" }, "-=0.2")
+            .to(beamFlare, { width: '200vw', height: '200vw', opacity: 1, duration: 1, ease: "power2.out" }, "<")
+            .to(preloader, { opacity: 0, duration: 1.5, ease: "power2.inOut" }, "-=0.5");
+    } else {
+        // Fallback if elements missing
+        if (preloader) preloader.style.display = 'none';
+    }
+};
 
 // A. Hero: Santa Sleigh (GLB)
 const heroGroup = new THREE.Group();
 let santaModel = null;
-const loader = new GLTFLoader();
+const loader = new GLTFLoader(loadingManager);
 
 loader.load('/santa_sleigh.glb', (gltf) => {
     santaModel = gltf.scene;
