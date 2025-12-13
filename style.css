@@ -45,6 +45,32 @@ body::-webkit-scrollbar {
     z-index: 1;
 }
 
+/* Full Screen Transition Curtains */
+.transition-curtain {
+    position: fixed;
+    top: 0;
+    width: 50%;
+    height: 100vh;
+    z-index: 9000;
+    transform: scaleX(0);
+    pointer-events: none;
+    will-change: transform;
+}
+
+.curtain-left {
+    left: 0;
+    background: #8a0000;
+    /* Deep Christmas Red */
+    transform-origin: left;
+}
+
+.curtain-right {
+    right: 0;
+    background: #004d00;
+    /* Deep Christmas Green */
+    transform-origin: right;
+}
+
 /* Typography */
 h1,
 h2,

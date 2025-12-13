@@ -217,122 +217,135 @@ heroGroup.rotation.set(0.1, -1.0, 0); // Semi right side view (3/4 angle)
 scene.add(heroGroup);
 
 
-// B. The Constellation Tracer
-const constellationGroup = new THREE.Group();
+// B. The Crystalline Network (Network Orb)
+const crystalGroup = new THREE.Group();
 
-// 1. The Core (Sticky Central Data Point)
-const coreGeo = new THREE.SphereGeometry(0.5, 32, 32);
-const coreMat = new THREE.MeshStandardMaterial({
-    color: CONFIG.colors.beam,
-    emissive: 0x0088ff,
-    emissiveIntensity: 2,
-    roughness: 0.1
+// 1. The Orb of Truth (Sphere of Nodes)
+const orbGeo = new THREE.SphereGeometry(3, 32, 32);
+const orbMat = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    transparent: true,
+    opacity: 0.1,
+    wireframe: true
 });
-const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-constellationGroup.add(coreMesh);
+const orbBase = new THREE.Mesh(orbGeo, orbMat);
+crystalGroup.add(orbBase);
 
-// 2. Nodes & Lines
-const nodeCount = 100; // Countless nodes
+// 2. Glowing Nodes on Surface
+const nodesCount = 150;
 const nodesGeo = new THREE.BufferGeometry();
-const linesGeo = new THREE.BufferGeometry();
-
 const nodesPos = [];
-const linesPos = [];
+for (let i = 0; i < nodesCount; i++) {
+    const phi = Math.acos(-1 + (2 * i) / nodesCount);
+    const theta = Math.sqrt(nodesCount * Math.PI) * phi;
 
-const constRadius = 15;
-
-for (let i = 0; i < nodeCount; i++) {
-    // Random position in a sphere around core
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    const r = 4 + Math.random() * constRadius; // Minimum distance
-
-    const x = r * Math.sin(phi) * Math.cos(theta);
-    const y = r * Math.sin(phi) * Math.sin(theta);
+    const r = 3;
+    const x = r * Math.cos(theta) * Math.sin(phi);
+    const y = r * Math.sin(theta) * Math.sin(phi);
     const z = r * Math.cos(phi);
 
     nodesPos.push(x, y, z);
-
-    // Line from Center (0,0,0) to Node (x,y,z)
-    linesPos.push(0, 0, 0); // Start
-    linesPos.push(x, y, z); // End
 }
-
 nodesGeo.setAttribute('position', new THREE.Float32BufferAttribute(nodesPos, 3));
-linesGeo.setAttribute('position', new THREE.Float32BufferAttribute(linesPos, 3));
-
 const nodesMat = new THREE.PointsMaterial({
-    color: CONFIG.colors.silver,
+    color: 0x00ffff, // Cyan
     size: 0.1,
     transparent: true,
     opacity: 0.8
 });
 const nodesMesh = new THREE.Points(nodesGeo, nodesMat);
-constellationGroup.add(nodesMesh);
+crystalGroup.add(nodesMesh);
 
-const linesMat = new THREE.LineBasicMaterial({
-    color: 0x4fc3f7,
+// 3. Data Lines (Connecting some nodes)
+// Purely decorative spinning lines inside
+const innerLinesGeo = new THREE.IcosahedronGeometry(2.5, 1);
+const innerLinesMat = new THREE.LineBasicMaterial({
+    color: 0x0088ff,
     transparent: true,
-    opacity: 0.4,
-    blending: THREE.AdditiveBlending
+    opacity: 0.3
 });
-const linesMesh = new THREE.LineSegments(linesGeo, linesMat);
-linesMesh.geometry.setDrawRange(0, 0); // Start hidden
-constellationGroup.add(linesMesh);
+const innerLines = new THREE.LineSegments(
+    new THREE.WireframeGeometry(innerLinesGeo),
+    innerLinesMat
+);
+crystalGroup.add(innerLines);
 
-constellationGroup.position.set(0, 5, -20); // Deep in space
-scene.add(constellationGroup);
+crystalGroup.position.set(0, 0, -20);
+crystalGroup.scale.set(0, 0, 0); // Start hidden
+scene.add(crystalGroup);
 
 
-// C. The Model Factory Forge
+// C. The Sleigh Forge
 const forgeGroup = new THREE.Group();
 
-// Vessel Modules (Abstract Representation)
-const vesselMaterial = new THREE.MeshStandardMaterial({
-    color: 0x88ccff,
+// Materials (Christmas Tech)
+const sleighRedMat = new THREE.MeshStandardMaterial({
+    color: 0xaa0000, // Deep Red
     roughness: 0.2,
-    metalness: 0.8,
-    envMapIntensity: 1
+    metalness: 0.7,
+    envMapIntensity: 1.5
+});
+const sleigGoldMat = new THREE.MeshStandardMaterial({
+    color: 0xd4af37, // Gold
+    roughness: 0.2,
+    metalness: 1.0
 });
 
-// 1. Core Module (Center)
-const coreModGeo = new THREE.CylinderGeometry(0.8, 0.8, 2, 16);
+// 1. Core Module (Body)
+const coreModGeo = new THREE.CylinderGeometry(0.8, 1.0, 3, 16);
 coreModGeo.rotateZ(Math.PI / 2); // Horizontal
-const coreMod = new THREE.Mesh(coreModGeo, vesselMaterial);
+const coreMod = new THREE.Mesh(coreModGeo, sleighRedMat); // Red Body
 forgeGroup.add(coreMod);
 
-// 2. Engine Module (Rear)
-const engineModGeo = new THREE.BoxGeometry(2, 1.2, 1.2);
-const engineMod = new THREE.Mesh(engineModGeo, vesselMaterial);
+// 2. Engine Module (Thrusters)
+const engineModGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+const engineMod = new THREE.Mesh(engineModGeo, sleighRedMat); // Red
+// Add Gold detail to engine
+const detailGeo = new THREE.TorusGeometry(0.5, 0.1, 8, 16);
+const detailMesh = new THREE.Mesh(detailGeo, sleigGoldMat);
+detailMesh.position.x = 0.8;
+detailMesh.rotation.y = Math.PI / 2;
+engineMod.add(detailMesh);
+
 // Start position (expanded)
 engineMod.position.set(4, 0, 0);
 forgeGroup.add(engineMod);
 
-// 3. Sensor Module (Front)
+// 3. Sensor Module (Nose Cone)
 const sensorModGeo = new THREE.ConeGeometry(0.6, 1.5, 16);
-sensorModGeo.rotateZ(-Math.PI / 2); // Point forward
-const sensorMod = new THREE.Mesh(sensorModGeo, vesselMaterial);
+sensorModGeo.rotateZ(-Math.PI / 2);
+const sensorMod = new THREE.Mesh(sensorModGeo, sleighRedMat); // Red
+// Rudolph Nose (Emissive Tip)
+const noseGeo = new THREE.SphereGeometry(0.3);
+const noseMat = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 2 });
+const noseMesh = new THREE.Mesh(noseGeo, noseMat);
+noseMesh.position.y = 0.8; // On the tip (which is rotated Y relative to cone group? No, cone is rotated Z)
+// Relative to rotated cone... tip is at +X in global, but +Y in local.
+noseMesh.position.set(0, 0.75, 0);
+sensorMod.add(noseMesh);
+
 // Start position (expanded)
 sensorMod.position.set(-4, 0, 0);
 forgeGroup.add(sensorMod);
 
-// Attribution Beacon (Light)
-const beaconLight = new THREE.PointLight(0x00ff00, 0, 5); // Green "Success" light, starts off
+// Attribution Beacon (Now a "Star" or "Attribution Authenticated" light)
+const beaconLight = new THREE.PointLight(0xd4af37, 0, 5); // Gold light
 beaconLight.position.set(0, 1.5, 0);
 forgeGroup.add(beaconLight);
 
-// Beacon Mesh (Visual indicator)
+// Beacon Ring (Halo)
 const beaconMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2),
-    new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.5 })
+    new THREE.TorusGeometry(0.5, 0.05, 8, 32),
+    new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.8 })
 );
+beaconMesh.rotation.x = Math.PI / 2;
 beaconMesh.position.set(0, 1.2, 0);
 beaconMesh.scale.set(0, 0, 0); // Hidden initially
 forgeGroup.add(beaconMesh);
 
-// Platform/Docking Bay (Wireframe for "Forge" feel)
+// Platform/Docking Bay (Green Hologram)
 const dockGeo = new THREE.RingGeometry(3, 3.2, 32);
-const dockMat = new THREE.MeshBasicMaterial({ color: CONFIG.colors.beam, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+const dockMat = new THREE.MeshBasicMaterial({ color: 0x00aa00, side: THREE.DoubleSide, transparent: true, opacity: 0.3 }); // Green dock
 const dockRing = new THREE.Mesh(dockGeo, dockMat);
 dockRing.rotation.x = Math.PI / 2;
 dockRing.position.y = -1.5;
@@ -342,39 +355,41 @@ forgeGroup.position.set(20, 2, -5);
 scene.add(forgeGroup);
 
 
-// D. Gift Box
+// D. Gift Box (Premium Procedural)
 const giftGroup = new THREE.Group();
-const boxGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+
+// Main Box
+const boxGeo = new THREE.BoxGeometry(2, 2, 2);
 const boxMat = new THREE.MeshStandardMaterial({
-    color: CONFIG.colors.red,
-    roughness: 0.3,
-    metalness: 0.2
+    color: 0xaa0000, // Rich Red
+    roughness: 0.1, // Shiny
+    metalness: 0.6,
+    envMapIntensity: 1.5
 });
-const boxBottom = new THREE.Mesh(boxGeo, boxMat);
-giftGroup.add(boxBottom);
+const giftBox = new THREE.Mesh(boxGeo, boxMat);
+giftGroup.add(giftBox);
 
-// Inner Light (Hidden initially)
-const innerLight = new THREE.PointLight(CONFIG.colors.giftInside, 0, 5);
-innerLight.position.set(0, 0.5, 0);
-giftGroup.add(innerLight);
-
-// Inner Glow Mesh
-const innerGlow = new THREE.Mesh(
-    new THREE.BoxGeometry(1.4, 0.1, 1.4),
-    new THREE.MeshBasicMaterial({ color: CONFIG.colors.giftInside })
-);
-innerGlow.position.y = 0.5;
-giftGroup.add(innerGlow);
-
-const lidGeo = new THREE.BoxGeometry(1.6, 0.3, 1.6);
-const lidMat = new THREE.MeshStandardMaterial({
-    color: CONFIG.colors.gold,
+// Ribbons (Torus cross)
+const ribbonMat = new THREE.MeshStandardMaterial({
+    color: 0xd4af37, // Gold
     roughness: 0.2,
-    metalness: 0.9
+    metalness: 1.0
 });
-const lid = new THREE.Mesh(lidGeo, lidMat);
-lid.position.y = 0.9;
-giftGroup.add(lid);
+const rib1 = new THREE.Mesh(new THREE.BoxGeometry(2.05, 2.05, 0.4), ribbonMat);
+const rib2 = new THREE.Mesh(new THREE.BoxGeometry(0.4, 2.05, 2.05), ribbonMat);
+giftGroup.add(rib1);
+giftGroup.add(rib2);
+
+// Bow (Spheres/Torus)
+const bowGeo = new THREE.TorusKnotGeometry(0.5, 0.1, 64, 8);
+const bow = new THREE.Mesh(bowGeo, ribbonMat);
+bow.position.y = 1.2;
+giftGroup.add(bow);
+
+// Inner Light (For Atmosphere)
+const innerLight = new THREE.PointLight(CONFIG.colors.giftInside, 0, 8);
+innerLight.position.set(0, 0, 0);
+giftGroup.add(innerLight);
 
 giftGroup.position.set(-15, 0.75, -5);
 scene.add(giftGroup);
@@ -419,41 +434,37 @@ tl.to(heroGroup.position, {
         ease: "power2.inOut"
     }, "scene0");
 
-// Scene 1: Hero -> Constellation Tracer
-// Constellation at (0, 5, -20)
-// Camera moves to view it from a distance, creating "zoom out" effect
+// Scene 1: Hero -> Crystalline Network (Curtain Transition)
+const leftCurtain = document.querySelector('.curtain-left');
+const rightCurtain = document.querySelector('.curtain-right');
+
 tl.to(camera.position, {
     x: 0,
-    y: 5,
-    z: -5, // Viewing position (15 units away from core)
-    duration: 1.5,
-    ease: "power2.inOut"
+    y: 0,
+    z: 10,
+    duration: 0.5,
+    ease: "power2.in"
 }, "scene1")
-    .to(cameraTarget, {
-        x: 0,
-        y: 5,
-        z: -20, // Look at Core
-        duration: 1.5,
-        ease: "power2.inOut"
-    }, "scene1")
-    // Hide Mascot Highlight
-    .to(highlightGroup.scale, {
-        x: 0,
-        y: 0,
-        z: 0,
-        duration: 0.5
-    }, "scene1")
-    // Animate Lines shooting out
-    .to({ val: 0 }, {
-        val: nodeCount * 2,
-        duration: 2,
-        ease: "none", // Linear speed for "robotic/laser" feel
-        onUpdate: function () {
-            linesMesh.geometry.setDrawRange(0, Math.floor(this.targets()[0].val));
-        }
-    }, "scene1+=0.5");
+    // Close Curtains
+    .to([leftCurtain, rightCurtain], { scaleX: 1, duration: 0.8, ease: "circ.inOut" }, "scene1+=0.3")
 
-// Scene 2: Constellation -> Forge
+    // Move Camera Behind Curtains
+    .to(camera.position, { x: 0, y: 0, z: -5, duration: 0.1 }, "scene1+=1.1") // Teleport
+    .to(cameraTarget, { x: 0, y: 0, z: -20, duration: 0.1 }, "scene1+=1.1")
+    .to(highlightGroup.scale, { x: 0, y: 0, z: 0, duration: 0.1 }, "scene1+=1.1")
+
+    // Open Curtains
+    .to([leftCurtain, rightCurtain], { scaleX: 0, duration: 0.8, ease: "circ.inOut" }, "scene1+=1.2")
+
+    // Reveal Crystal Orb
+    .to(crystalGroup.scale, {
+        x: 1, y: 1, z: 1,
+        duration: 1.5,
+        ease: "back.out(1.2)"
+    }, "scene1+=1.5");
+
+
+// Scene 2: Crystal Orb -> Forge
 // Forge at (20, 2, -5)
 tl.to(camera.position, {
     x: 20,
@@ -469,8 +480,8 @@ tl.to(camera.position, {
         duration: 1.5,
         ease: "power2.inOut"
     }, "scene2")
-    // Hide Constellation (Fade out lines?)
-    .to(constellationGroup.scale, {
+    // Hide Crystal
+    .to(crystalGroup.scale, {
         x: 0,
         y: 0,
         z: 0,
@@ -527,15 +538,21 @@ tl.to(camera.position, {
         duration: 1.5,
         ease: "power2.inOut"
     }, "scene3")
-    // Open Gift
-    .to(lid.position, {
-        y: 2.5,
-        rotation: -0.5,
-        duration: 0.5
+    // Open Gift (Float & Glow since we can't guarantee lid structure)
+    .to(giftGroup.position, {
+        y: 1.5,
+        duration: 1,
+        ease: "power2.inOut"
+    }, "scene3+=0.5")
+    .to(giftGroup.rotation, {
+        y: Math.PI * 2,
+        duration: 2,
+        ease: "power1.inOut"
     }, "scene3+=0.5")
     .to(innerLight, {
-        intensity: 5,
-        duration: 0.5
+        intensity: 8,
+        distance: 10,
+        duration: 1
     }, "scene3+=0.5");
 
 
@@ -591,10 +608,18 @@ function animate(time) {
     // Particles
     particlesMesh.rotation.y = t * 0.05;
 
-    // Constellation Animation
-    if (constellationGroup) {
-        constellationGroup.rotation.y = t * 0.05;
-        constellationGroup.rotation.z = Math.sin(t * 0.2) * 0.05;
+    // Crystal Orb Animation
+    if (crystalGroup) {
+        crystalGroup.rotation.y = t * 0.1;
+        crystalGroup.rotation.z = Math.sin(t * 0.1) * 0.05;
+        if (innerLines) {
+            innerLines.rotation.x = t * 0.2;
+        }
+    }
+
+    // Gift Animation
+    if (giftGroup) {
+        giftGroup.position.y = 0.75 + Math.sin(t * 1) * 0.1;
     }
 
     // Forge Animation
