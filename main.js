@@ -217,76 +217,129 @@ heroGroup.rotation.set(0.1, -1.0, 0); // Semi right side view (3/4 angle)
 scene.add(heroGroup);
 
 
-// B. The Truth Beam (With Data Stream) - REMOVED "Blue Line" per user request
-const beamGroup = new THREE.Group();
-// Main beam
-/*
-const beamMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.2, 0.2, 30, 32),
-    new THREE.MeshBasicMaterial({ color: CONFIG.colors.beam, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending })
-);
-beamGroup.add(beamMesh);
+// B. The Constellation Tracer
+const constellationGroup = new THREE.Group();
 
-// Outer Glow
-const outerBeamMesh = new THREE.Mesh(
-    new THREE.CylinderGeometry(1, 1, 30, 32),
-    new THREE.MeshBasicMaterial({ color: CONFIG.colors.beam, transparent: true, opacity: 0.05, side: THREE.DoubleSide, blending: THREE.AdditiveBlending })
-);
-beamGroup.add(outerBeamMesh);
-*/
+// 1. The Core (Sticky Central Data Point)
+const coreGeo = new THREE.SphereGeometry(0.5, 32, 32);
+const coreMat = new THREE.MeshStandardMaterial({
+    color: CONFIG.colors.beam,
+    emissive: 0x0088ff,
+    emissiveIntensity: 2,
+    roughness: 0.1
+});
+const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+constellationGroup.add(coreMesh);
 
-// Data Particles (Floating Blocks) - REMOVED per user request
-/*
-const dataInstances = 50;
-const dataGeo = new THREE.BoxGeometry(0.1, 0.1, 0.1);
-const dataMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-const dataBlocks = new THREE.InstancedMesh(dataGeo, dataMat, dataInstances);
-const dummy = new THREE.Object3D();
+// 2. Nodes & Lines
+const nodeCount = 100; // Countless nodes
+const nodesGeo = new THREE.BufferGeometry();
+const linesGeo = new THREE.BufferGeometry();
 
-for (let i = 0; i < dataInstances; i++) {
-    dummy.position.set(
-        (Math.random() - 0.5) * 1.5,
-        (Math.random() - 0.5) * 20,
-        (Math.random() - 0.5) * 1.5
-    );
-    dummy.updateMatrix();
-    dataBlocks.setMatrixAt(i, dummy.matrix);
+const nodesPos = [];
+const linesPos = [];
+
+const constRadius = 15;
+
+for (let i = 0; i < nodeCount; i++) {
+    // Random position in a sphere around core
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    const r = 4 + Math.random() * constRadius; // Minimum distance
+
+    const x = r * Math.sin(phi) * Math.cos(theta);
+    const y = r * Math.sin(phi) * Math.sin(theta);
+    const z = r * Math.cos(phi);
+
+    nodesPos.push(x, y, z);
+
+    // Line from Center (0,0,0) to Node (x,y,z)
+    linesPos.push(0, 0, 0); // Start
+    linesPos.push(x, y, z); // End
 }
-beamGroup.add(dataBlocks);
-*/
 
-beamGroup.position.set(0, 10, -25);
-scene.add(beamGroup);
+nodesGeo.setAttribute('position', new THREE.Float32BufferAttribute(nodesPos, 3));
+linesGeo.setAttribute('position', new THREE.Float32BufferAttribute(linesPos, 3));
+
+const nodesMat = new THREE.PointsMaterial({
+    color: CONFIG.colors.silver,
+    size: 0.1,
+    transparent: true,
+    opacity: 0.8
+});
+const nodesMesh = new THREE.Points(nodesGeo, nodesMat);
+constellationGroup.add(nodesMesh);
+
+const linesMat = new THREE.LineBasicMaterial({
+    color: 0x4fc3f7,
+    transparent: true,
+    opacity: 0.4,
+    blending: THREE.AdditiveBlending
+});
+const linesMesh = new THREE.LineSegments(linesGeo, linesMat);
+linesMesh.geometry.setDrawRange(0, 0); // Start hidden
+constellationGroup.add(linesMesh);
+
+constellationGroup.position.set(0, 5, -20); // Deep in space
+scene.add(constellationGroup);
 
 
-// C. Crystal Forest - REMOVED per user request
-/*
-const forestGroup = new THREE.Group();
-const treeGeo = new THREE.ConeGeometry(0.6, 2.5, 4);
-const treeMat = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    transmission: 0.95,
-    opacity: 1,
-    metalness: 0.1,
-    roughness: 0.05,
-    ior: 1.5,
-    thickness: 1,
-    clearcoat: 1
+// C. The Model Factory Forge
+const forgeGroup = new THREE.Group();
+
+// Vessel Modules (Abstract Representation)
+const vesselMaterial = new THREE.MeshStandardMaterial({
+    color: 0x88ccff,
+    roughness: 0.2,
+    metalness: 0.8,
+    envMapIntensity: 1
 });
 
-for (let i = 0; i < 15; i++) {
-    const tree = new THREE.Mesh(treeGeo, treeMat);
-    const x = (Math.random() - 0.5) * 18;
-    const z = (Math.random() - 0.5) * 18;
-    tree.position.set(x, 1.25, z);
-    tree.rotation.y = Math.random() * Math.PI;
-    tree.castShadow = true;
-    tree.scale.setScalar(0.7 + Math.random() * 0.6);
-    forestGroup.add(tree);
-}
-forestGroup.position.set(15, 0, 5);
-scene.add(forestGroup);
-*/
+// 1. Core Module (Center)
+const coreModGeo = new THREE.CylinderGeometry(0.8, 0.8, 2, 16);
+coreModGeo.rotateZ(Math.PI / 2); // Horizontal
+const coreMod = new THREE.Mesh(coreModGeo, vesselMaterial);
+forgeGroup.add(coreMod);
+
+// 2. Engine Module (Rear)
+const engineModGeo = new THREE.BoxGeometry(2, 1.2, 1.2);
+const engineMod = new THREE.Mesh(engineModGeo, vesselMaterial);
+// Start position (expanded)
+engineMod.position.set(4, 0, 0);
+forgeGroup.add(engineMod);
+
+// 3. Sensor Module (Front)
+const sensorModGeo = new THREE.ConeGeometry(0.6, 1.5, 16);
+sensorModGeo.rotateZ(-Math.PI / 2); // Point forward
+const sensorMod = new THREE.Mesh(sensorModGeo, vesselMaterial);
+// Start position (expanded)
+sensorMod.position.set(-4, 0, 0);
+forgeGroup.add(sensorMod);
+
+// Attribution Beacon (Light)
+const beaconLight = new THREE.PointLight(0x00ff00, 0, 5); // Green "Success" light, starts off
+beaconLight.position.set(0, 1.5, 0);
+forgeGroup.add(beaconLight);
+
+// Beacon Mesh (Visual indicator)
+const beaconMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(0.2),
+    new THREE.MeshBasicMaterial({ color: 0x00ff00, transparent: true, opacity: 0.5 })
+);
+beaconMesh.position.set(0, 1.2, 0);
+beaconMesh.scale.set(0, 0, 0); // Hidden initially
+forgeGroup.add(beaconMesh);
+
+// Platform/Docking Bay (Wireframe for "Forge" feel)
+const dockGeo = new THREE.RingGeometry(3, 3.2, 32);
+const dockMat = new THREE.MeshBasicMaterial({ color: CONFIG.colors.beam, side: THREE.DoubleSide, transparent: true, opacity: 0.3 });
+const dockRing = new THREE.Mesh(dockGeo, dockMat);
+dockRing.rotation.x = Math.PI / 2;
+dockRing.position.y = -1.5;
+forgeGroup.add(dockRing);
+
+forgeGroup.position.set(20, 2, -5);
+scene.add(forgeGroup);
 
 
 // D. Gift Box
@@ -366,49 +419,92 @@ tl.to(heroGroup.position, {
         ease: "power2.inOut"
     }, "scene0");
 
-// Scene 1: Hero -> Beam
-// Beam is at (0, 10, -25)
+// Scene 1: Hero -> Constellation Tracer
+// Constellation at (0, 5, -20)
+// Camera moves to view it from a distance, creating "zoom out" effect
 tl.to(camera.position, {
     x: 0,
-    y: 8,
-    z: -8,
+    y: 5,
+    z: -5, // Viewing position (15 units away from core)
     duration: 1.5,
     ease: "power2.inOut"
 }, "scene1")
     .to(cameraTarget, {
         x: 0,
-        y: 10,
-        z: -25,
+        y: 5,
+        z: -20, // Look at Core
         duration: 1.5,
         ease: "power2.inOut"
     }, "scene1")
-    // Hide Mascot Highlight as we move away
+    // Hide Mascot Highlight
     .to(highlightGroup.scale, {
         x: 0,
         y: 0,
         z: 0,
         duration: 0.5
-    }, "scene1");
+    }, "scene1")
+    // Animate Lines shooting out
+    .to({ val: 0 }, {
+        val: nodeCount * 2,
+        duration: 2,
+        ease: "none", // Linear speed for "robotic/laser" feel
+        onUpdate: function () {
+            linesMesh.geometry.setDrawRange(0, Math.floor(this.targets()[0].val));
+        }
+    }, "scene1+=0.5");
 
-// Scene 2: Beam -> Forest
-// Forest at (15, 0, 5). 
-// Camera needs to look from outside in
+// Scene 2: Constellation -> Forge
+// Forge at (20, 2, -5)
 tl.to(camera.position, {
-    x: 8,
-    y: 3,
-    z: 12,
+    x: 20,
+    y: 4,
+    z: 5,
     duration: 1.5,
     ease: "power2.inOut"
 }, "scene2")
     .to(cameraTarget, {
-        x: 15,
-        y: 1.5,
-        z: 5,
+        x: 20,
+        y: 2,
+        z: -5,
         duration: 1.5,
         ease: "power2.inOut"
-    }, "scene2");
+    }, "scene2")
+    // Hide Constellation (Fade out lines?)
+    .to(constellationGroup.scale, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: 0.5
+    }, "scene2")
 
-// Scene 3: Forest -> Gift
+    // Animate Forge Assembly
+    .to(engineMod.position, {
+        x: 1.2, // Snap to core (Core width 2/2 = 1? Core Cylinder height 2. Radius 0.8)
+        // Cylinder height is along X axis due to rotation. height 2.
+        // Left side is -1, Right side is +1.
+        // Engine is on Right (+x)?
+        // Wait, Engine start at 4. Snap to 1.1 (gap) or 1.
+        x: 1.1,
+        duration: 1,
+        ease: "back.out(1.7)"
+    }, "scene2+=0.5")
+    .to(sensorMod.position, {
+        x: -1.1,
+        duration: 1,
+        ease: "back.out(1.7)"
+    }, "scene2+=0.5") // Simultaneous snap
+
+    // Beacon Activate
+    .to(beaconMesh.scale, {
+        x: 1, y: 1, z: 1,
+        duration: 0.3
+    }, "scene2+=1.3")
+    .to(beaconLight, {
+        intensity: 2,
+        duration: 0.3
+    }, "scene2+=1.3");
+
+// Scene 3: Forge -> Gift
 // Gift at (-15, 0.75, -5)
 tl.to(camera.position, {
     x: -10,
@@ -417,6 +513,13 @@ tl.to(camera.position, {
     duration: 1.5,
     ease: "power2.inOut"
 }, "scene3")
+    // Hide Forge
+    .to(forgeGroup.scale, {
+        x: 0,
+        y: 0,
+        z: 0,
+        duration: 0.5
+    }, "scene3")
     .to(cameraTarget, {
         x: -15,
         y: 1,
@@ -487,6 +590,23 @@ function animate(time) {
 
     // Particles
     particlesMesh.rotation.y = t * 0.05;
+
+    // Constellation Animation
+    if (constellationGroup) {
+        constellationGroup.rotation.y = t * 0.05;
+        constellationGroup.rotation.z = Math.sin(t * 0.2) * 0.05;
+    }
+
+    // Forge Animation
+    if (forgeGroup) {
+        forgeGroup.position.y = 2 + Math.sin(t * 0.5) * 0.2; // Gentle Float
+        // Maybe rotate the dock ring?
+        if (forgeGroup.children[4]) { // dockRing is likely index 4 or similar, lets search by type or var if strictly needed, but simple is ok here or just access child
+            // Actually, I can't access 'dockRing' var here as it is scoped.
+            // But I added it to forgeGroup.
+            // Let's just rotate the whole group slightly or nothing.
+        }
+    }
 
     camera.lookAt(cameraTarget);
     renderer.render(scene, camera);
