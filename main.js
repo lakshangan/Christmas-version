@@ -7,6 +7,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
 
 // Register GSAP Plugin
+// Register GSAP Plugin
 gsap.registerPlugin(ScrollTrigger);
 
 // --- Configuration ---
@@ -81,30 +82,25 @@ outputPlane.receiveShadow = true;
 scene.add(outputPlane);
 */
 
+
+
+
 // 2. Global Particles (Dense Christmas Snow)
 const particlesGeometry = new THREE.BufferGeometry();
-const particlesCount = 5000; // More snow
+const particlesCount = 5000;
 const posArray = new Float32Array(particlesCount * 3);
 for (let i = 0; i < particlesCount * 3; i++) {
     // Spread them wider and taller
     posArray[i] = (Math.random() - 0.5) * 100;
 }
 particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.1, // Larger flakes
-    color: 0xffffff, // Pure white snow
-    transparent: true,
-    opacity: 0.8,
-    map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/sprites/snowflake1.png'), // Try to load a sprite if possible, or fallback to square
-    blending: THREE.AdditiveBlending,
-    depthWrite: false
-});
-// Since we don't have local texture, let's stick to simple square/circle points but make them soft
+
+// Initial Opacity 0 (Hidden in Hero)
 const softSnowMat = new THREE.PointsMaterial({
     size: 0.15,
     color: 0xffffff,
     transparent: true,
-    opacity: 0.7,
+    opacity: 0,
     blending: THREE.AdditiveBlending
 });
 
@@ -113,7 +109,7 @@ scene.add(particlesMesh);
 
 // 3. Magic Dust (Twinkling floating particles)
 const dustGeo = new THREE.BufferGeometry();
-const dustCount = 2000;
+const dustCount = 600; // Reduced dust
 const dustPos = new Float32Array(dustCount * 3);
 for (let i = 0; i < dustCount * 3; i++) {
     dustPos[i] = (Math.random() - 0.5) * 80;
@@ -123,7 +119,7 @@ const dustMat = new THREE.PointsMaterial({
     size: 0.05,
     color: 0xffd700, // Gold dust
     transparent: true,
-    opacity: 0.5,
+    opacity: 0, // Hidden in Hero (was 0.5)
     blending: THREE.AdditiveBlending
 });
 const dustMesh = new THREE.Points(dustGeo, dustMat);
@@ -155,7 +151,7 @@ const starsMat = new THREE.PointsMaterial({
     color: 0xffffff,
     size: 0.5,
     transparent: true,
-    opacity: 0.8
+    opacity: 0 // Hidden in Hero (was 0.8)
 });
 const starsMesh = new THREE.Points(starsGeo, starsMat);
 scene.add(starsMesh);
@@ -396,8 +392,11 @@ loader.load('/orange octopus 3d model.glb', (gltf) => {
         if (node.isMesh) {
             node.castShadow = true;
             node.receiveShadow = true;
-            node.material.envMapIntensity = 1.2; // Slightly reduced for cleaner look
-            node.material.roughness = 0.3;
+            // brightness boost for raw model
+            if (node.material) {
+                node.material.envMapIntensity = 1.0;
+                node.material.needsUpdate = true;
+            }
         }
     });
 
@@ -409,20 +408,12 @@ loader.load('/orange octopus 3d model.glb', (gltf) => {
     console.error("Error loading Octopus for Forge:", error);
 });
 
-// Attribution Beacon (Now a "Star" or "Attribution Authenticated" light)
-const beaconLight = new THREE.PointLight(0xfffae0, 0, 5); // Warm White/Gold
-beaconLight.position.set(0, 2.5, 0); // Higher up
+// Attribution Beacon (Simplifed - Just Light)
+const beaconLight = new THREE.PointLight(0xfffae0, 2, 10); // Warm White/Gold
+beaconLight.position.set(0, 2, 0);
 forgeGroup.add(beaconLight);
 
-// Beacon Ring (Halo) - Minimalist
-const beaconMesh = new THREE.Mesh(
-    new THREE.TorusGeometry(1.5, 0.02, 16, 64), // Thinner, wider ring
-    new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.4 })
-);
-beaconMesh.rotation.x = Math.PI / 2;
-beaconMesh.position.set(0, -0.5, 0); // Underneath
-beaconMesh.scale.set(0, 0, 0); // Hidden initially
-forgeGroup.add(beaconMesh);
+// Removed Beacon Ring (Circle) per user request
 
 // Removed Dock Ring for Minimal look as requested
 
@@ -680,8 +671,8 @@ tl.to(camera.position, {
 // Forge at (20, 2, -5)
 tl.to(camera.position, {
     x: 20,
-    y: 4,
-    z: 5,
+    y: 2.5, // Eye level (was 4)
+    z: 7,   // Better framing (was 5)
     duration: 1.5,
     ease: "power3.inOut"
 }, "scene2")
@@ -715,12 +706,8 @@ tl.to(camera.position, {
     */
 
     // Beacon Activate
-    .to(beaconMesh.scale, {
-        x: 1, y: 1, z: 1,
-        duration: 0.3
-    }, "scene2+=1.3")
     .to(beaconLight, {
-        intensity: 2,
+        intensity: 3,
         duration: 0.3
     }, "scene2+=1.3");
 
@@ -801,7 +788,10 @@ function animate(time) {
     */
 
     // Particles
-    particlesMesh.rotation.y = t * 0.05;
+    if (particlesMesh) {
+        particlesMesh.rotation.y = t * 0.05;
+    }
+
     // Magic Dust Float
     if (dustMesh) {
         dustMesh.rotation.y = -t * 0.02;
@@ -830,6 +820,9 @@ function animate(time) {
     }
 
     // Forge Animation
+    if (forgeOctopus) {
+        forgeOctopus.rotation.y += 0.005; // Continuous Revolution
+    }
     if (forgeGroup) {
         forgeGroup.position.y = 2 + Math.sin(t * 0.5) * 0.2; // Gentle Float
         // Maybe rotate the dock ring?

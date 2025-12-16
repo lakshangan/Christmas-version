@@ -257,32 +257,113 @@ section {
     text-align: center;
 }
 
+.vision-section {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+    color: white;
+    overflow: hidden;
+    position: relative;
+    padding: 5rem 2rem;
+}
+
+.vision-section h2 {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: linear-gradient(to right, #fff, #ccc);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.text-loop-container {
+    white-space: nowrap;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    font-size: clamp(4rem, 10vw, 10rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.05);
+    /* Very subtle background text */
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.loop-word {
+    display: inline-block;
+    padding: 0 2vw;
+    animation: scroll-left 60s linear infinite;
+}
+
+.loop-word:nth-child(even) {
+    animation: scroll-right 60s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes scroll-right {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}
+
 .content-block {
-    max-width: 500px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--glass-border);
-    padding: 3rem;
-    border-radius: 4px;
-    /* Minimal, premium radius */
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    background: transparent;
+    /* Remove Glass Box */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    padding: 2rem 0 2rem 3rem;
+    /* Left padding for accent */
+    border-left: 2px solid var(--color-gold);
+    /* Minimal Accent Line */
+    box-shadow: none;
+    text-align: left;
 }
 
 .content-block.right {
     margin-left: auto;
-    margin-right: 10%;
+    margin-right: 15%;
+    border-left: none;
+    border-right: 2px solid var(--color-gold);
+    padding: 2rem 3rem 2rem 0;
+    text-align: right;
 }
 
 .content-block.left {
     margin-right: auto;
-    margin-left: 10%;
+    margin-left: 15%;
 }
 
 .content-block h2 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: var(--color-gold-light);
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    /* Crisp White */
 }
 
 .content-block p {
@@ -369,8 +450,10 @@ footer {
     line-height: 1.05;
     color: #fff;
     margin-bottom: 2rem;
-    letter-spacing: -0.03em;
-    /* Tight editorial spacing */
+    letter-spacing: -0.04em;
+    /* Tighter for high-end feel */
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    /* Soft lifting shadow */
     opacity: 0;
     /* JS will reveal */
 }
@@ -415,23 +498,26 @@ footer {
 
 .premium-btn {
     display: inline-block;
-    padding: 1rem 3.5rem;
-    background: #fff;
-    color: #8a1c1c;
-    text-decoration: none;
+    padding: 1.2rem 3rem;
+    font-size: 0.9rem;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #fff;
     text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.2em;
+    border-radius: 0;
+    /* Sharp, minimal */
+    transition: all 0.4s ease;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
 }
 
 .premium-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-    background: var(--color-gold);
-    color: #fff;
+    background: #fff;
+    color: #8a0000;
+    border-color: #fff;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
 }
 
 /* Santa Letter Styles */
@@ -560,4 +646,16 @@ footer {
         opacity: 0.7;
         transform: translate(-50%, -50%) scale(1.1);
     }
+}
+
+/* Vision Section (Text Loop) */
+.loop-wrapper {
+    position: relative;
+    height: 1.2em;
+    /* Height of one line */
+    overflow: hidden;
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
