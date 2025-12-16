@@ -352,65 +352,55 @@ const sleigGoldMat = new THREE.MeshStandardMaterial({
     metalness: 1.0
 });
 
-// 1. Core Module (Body)
-const coreModGeo = new THREE.CylinderGeometry(0.8, 1.0, 3, 16);
-coreModGeo.rotateZ(Math.PI / 2); // Horizontal
-const coreMod = new THREE.Mesh(coreModGeo, sleighRedMat); // Red Body
-forgeGroup.add(coreMod);
+// 1. Octopus Intern (Replacing Sleigh Parts)
+let forgeOctopus = null;
+loader.load('/orange octopus 3d model.glb', (gltf) => {
+    forgeOctopus = gltf.scene;
 
-// 2. Engine Module (Thrusters)
-const engineModGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
-const engineMod = new THREE.Mesh(engineModGeo, sleighRedMat); // Red
-// Add Gold detail to engine
-const detailGeo = new THREE.TorusGeometry(0.5, 0.1, 8, 16);
-const detailMesh = new THREE.Mesh(detailGeo, sleigGoldMat);
-detailMesh.position.x = 0.8;
-detailMesh.rotation.y = Math.PI / 2;
-engineMod.add(detailMesh);
+    // Auto-center and scale
+    const box = new THREE.Box3().setFromObject(forgeOctopus);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
 
-// Start position (expanded)
-engineMod.position.set(4, 0, 0);
-forgeGroup.add(engineMod);
+    forgeOctopus.position.sub(center);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    // Adjust scale to fit in the forge area (approx 4-5 units)
+    const scaleFactor = 5 / maxDim;
+    forgeOctopus.scale.setScalar(scaleFactor);
 
-// 3. Sensor Module (Nose Cone)
-const sensorModGeo = new THREE.ConeGeometry(0.6, 1.5, 16);
-sensorModGeo.rotateZ(-Math.PI / 2);
-const sensorMod = new THREE.Mesh(sensorModGeo, sleighRedMat); // Red
-// Rudolph Nose (Emissive Tip)
-const noseGeo = new THREE.SphereGeometry(0.3);
-const noseMat = new THREE.MeshStandardMaterial({ color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 2 });
-const noseMesh = new THREE.Mesh(noseGeo, noseMat);
-noseMesh.position.y = 0.8; // On the tip (which is rotated Y relative to cone group? No, cone is rotated Z)
-// Relative to rotated cone... tip is at +X in global, but +Y in local.
-noseMesh.position.set(0, 0.75, 0);
-sensorMod.add(noseMesh);
+    forgeOctopus.traverse((node) => {
+        if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+            node.material.envMapIntensity = 1.2; // Slightly reduced for cleaner look
+            node.material.roughness = 0.3;
+        }
+    });
 
-// Start position (expanded)
-sensorMod.position.set(-4, 0, 0);
-forgeGroup.add(sensorMod);
+    // Mark as interactive
+    forgeOctopus.name = 'forgeOctopus';
+
+    forgeGroup.add(forgeOctopus);
+}, undefined, (error) => {
+    console.error("Error loading Octopus for Forge:", error);
+});
 
 // Attribution Beacon (Now a "Star" or "Attribution Authenticated" light)
-const beaconLight = new THREE.PointLight(0xd4af37, 0, 5); // Gold light
-beaconLight.position.set(0, 1.5, 0);
+const beaconLight = new THREE.PointLight(0xfffae0, 0, 5); // Warm White/Gold
+beaconLight.position.set(0, 2.5, 0); // Higher up
 forgeGroup.add(beaconLight);
 
-// Beacon Ring (Halo)
+// Beacon Ring (Halo) - Minimalist
 const beaconMesh = new THREE.Mesh(
-    new THREE.TorusGeometry(0.5, 0.05, 8, 32),
-    new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0.8 })
+    new THREE.TorusGeometry(1.5, 0.02, 16, 64), // Thinner, wider ring
+    new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.4 })
 );
 beaconMesh.rotation.x = Math.PI / 2;
-beaconMesh.position.set(0, 1.2, 0);
+beaconMesh.position.set(0, -0.5, 0); // Underneath
 beaconMesh.scale.set(0, 0, 0); // Hidden initially
 forgeGroup.add(beaconMesh);
 
-// Platform/Docking Bay (Green Hologram)
-const dockGeo = new THREE.RingGeometry(3, 3.2, 32);
-const dockMat = new THREE.MeshBasicMaterial({ color: 0x00aa00, side: THREE.DoubleSide, transparent: true, opacity: 0.3 }); // Green dock
-const dockRing = new THREE.Mesh(dockGeo, dockMat);
-dockRing.rotation.x = Math.PI / 2;
-dockRing.position.y = -1.5;
-forgeGroup.add(dockRing);
+// Removed Dock Ring for Minimal look as requested
 
 forgeGroup.position.set(20, 2, -5);
 scene.add(forgeGroup);
@@ -486,11 +476,53 @@ function onDocClick(event) {
     mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(giftGroup.children, true);
+    // Intersect all relevant groups
+    const objectsToTest = [...giftGroup.children, ...forgeGroup.children];
+    const intersects = raycaster.intersectObjects(objectsToTest, true);
 
-    if (intersects.length > 0 && !isGiftOpen) {
-        openGift();
+    if (intersects.length > 0) {
+        // Check for Gift
+        if (!isGiftOpen && intersects.some(hit => giftGroup.children.includes(hit.object) || hit.object.parent === giftGroup || hit.object.parent?.parent === giftGroup)) {
+            openGift();
+            return;
+        }
+
+        // Check for Forge Octopus (Interactive Poke)
+        const hitOctopus = intersects.find(hit => {
+            // Traverse up to find if it's the octopus
+            let obj = hit.object;
+            while (obj) {
+                if (obj.name === 'forgeOctopus') return true;
+                obj = obj.parent;
+            }
+            return false;
+        });
+
+        if (hitOctopus) {
+            interactOctopus();
+        }
     }
+}
+
+function interactOctopus() {
+    if (!forgeOctopus) return;
+
+    // fun bounce/spin animation
+    gsap.to(forgeOctopus.scale, {
+        x: forgeOctopus.scale.x * 1.2,
+        y: forgeOctopus.scale.y * 0.8,
+        z: forgeOctopus.scale.z * 1.2,
+        duration: 0.1,
+        yoyo: true,
+        repeat: 1,
+        ease: "power2.inOut"
+    });
+
+    gsap.to(forgeOctopus.rotation, {
+        y: forgeOctopus.rotation.y + Math.PI * 2,
+        duration: 1,
+        ease: "elastic.out(1, 0.5)"
+    });
 }
 
 function openGift() {
@@ -637,13 +669,9 @@ tl.to(camera.position, {
         duration: 0.5
     }, "scene2")
 
-    // Animate Forge Assembly
+    // Animate Forge Assembly - REMOVED (Replaced by Static Octopus)
+    /*
     .to(engineMod.position, {
-        x: 1.2, // Snap to core (Core width 2/2 = 1? Core Cylinder height 2. Radius 0.8)
-        // Cylinder height is along X axis due to rotation. height 2.
-        // Left side is -1, Right side is +1.
-        // Engine is on Right (+x)?
-        // Wait, Engine start at 4. Snap to 1.1 (gap) or 1.
         x: 1.1,
         duration: 1,
         ease: "back.out(1.7)"
@@ -652,7 +680,8 @@ tl.to(camera.position, {
         x: -1.1,
         duration: 1,
         ease: "back.out(1.7)"
-    }, "scene2+=0.5") // Simultaneous snap
+    }, "scene2+=0.5")
+    */
 
     // Beacon Activate
     .to(beaconMesh.scale, {
@@ -754,7 +783,7 @@ function animate(time) {
     if (crystalGroup) {
         crystalGroup.rotation.y = t * 0.1;
         crystalGroup.rotation.z = Math.sin(t * 0.1) * 0.05;
-        if (innerLines) {
+        if (typeof innerLines !== 'undefined' && innerLines) {
             innerLines.rotation.x = t * 0.2;
         }
     }
