@@ -196,7 +196,25 @@ loadingManager.onLoad = () => {
                 duration: 0.8,
                 ease: "expo.out"
             }, "<")
-            .to(preloader, { opacity: 0, duration: 1.0, ease: "power2.out" }, "-=0.5"); // Quicker reveal
+            .to(preloader, { opacity: 0, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
+
+            // Hero Entrance (Staggered & Smooth)
+            .fromTo(".hero-lead-in",
+                { y: 30, opacity: 0 },
+                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
+                "-=1.0")
+            .fromTo(".hero-main-title",
+                { y: 50, opacity: 0 },
+                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
+                "-=1.0")
+            .fromTo(".mascot-description",
+                { y: 30, opacity: 0 },
+                { y: 0, opacity: 0.9, duration: 1.2, ease: "power3.out" },
+                "-=0.9")
+            .fromTo(".premium-btn",
+                { y: 30, opacity: 0 },
+                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
+                "-=0.9");
     } else {
         // Fallback if elements missing
         if (preloader) preloader.style.display = 'none';

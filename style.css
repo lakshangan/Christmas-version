@@ -358,8 +358,8 @@ footer {
     /* Silver/White */
     margin-bottom: 0.5rem;
     display: block;
-    animation: fadeInUp 1s ease-out 0.2s forwards;
     opacity: 0;
+    /* JS will reveal */
 }
 
 .hero-main-title {
@@ -372,7 +372,7 @@ footer {
     letter-spacing: -0.03em;
     /* Tight editorial spacing */
     opacity: 0;
-    animation: fadeInUp 1s ease-out 0.4s forwards;
+    /* JS will reveal */
 }
 
 .gold-text-premium {
