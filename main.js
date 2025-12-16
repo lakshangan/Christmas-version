@@ -293,7 +293,8 @@ highlightGroup.add(highlightSpot);
 heroGroup.add(highlightGroup);
 
 // Place on RIGHT side initially - ALIGNED with Nav Items (Vision/Tech)
-heroGroup.position.set(3.2, 1.5, 0); // Moved Up
+// STARTS OFF-SCREEN for Cinematic Video Reveal
+heroGroup.position.set(20, 1.5, 0); // Far right (Hidden)
 heroGroup.rotation.set(0.1, -1.0, 0); // Semi right side view (3/4 angle)
 scene.add(heroGroup);
 
@@ -606,27 +607,32 @@ const tl = gsap.timeline({
 });
 
 // Scene 0: Mascot -> Hero (Right to Center)
-// Move Sleigh from Right to Center
+// Scene 0: Video -> 3D Hero Entrance
+// 1. Move Sleigh IN from Right
 tl.to(heroGroup.position, {
-    x: 0,
+    x: 1.5, // Center-Right (Classic Hero Spot)
     y: 0.0,
-    z: 1, // Bring closer
-    duration: 1.5,
-    ease: "power3.inOut"
+    z: 1,
+    duration: 2.0, // Slow, majestic entry
+    ease: "power3.out"
 }, "scene0")
+    // 2. Rotate to face user
     .to(heroGroup.rotation, {
         x: 0,
-        y: 0.2, // Face front-right gently
+        y: -0.2, // Slight angle
         z: 0,
-        duration: 1.5,
-        ease: "power3.inOut"
+        duration: 2.0,
+        ease: "power3.out"
     }, "scene0")
-    // Ensure camera looks solid
+    // 3. Fade Out Video (via CSS Class toggle or opacity tween if accessible, 
+    // but here we let the scroll handle the visual shift naturally. Video stays fixed, 3D slides over).
+
+    // 4. Camera slightly adjusts to frame the sleigh
     .to(camera.position, {
         x: 0,
         y: 2,
         z: 9,
-        duration: 1.5,
+        duration: 2.0,
         ease: "power2.inOut"
     }, "scene0");
 

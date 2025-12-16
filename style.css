@@ -396,9 +396,34 @@ footer {
     align-items: center;
     justify-content: center;
     padding: 0 5%;
-    /* Premium Red Gradient from Reference */
-    background: radial-gradient(circle at 50% 50%, #8a1c1c 0%, #4a0808 100%);
+    background: #000;
+    /* Fallback */
     overflow: hidden;
+}
+
+.hero-video-bg {
+    position: absolute;
+    /* Keeps it in the section flow, not fixed globally to prevent it appearing in other sections */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.6;
+    /* Dimmed further for text pop */
+    filter: saturate(1.2) contrast(1.1);
+    /* Enrich video look */
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 100%);
+    z-index: 1;
 }
 
 .highlight-container {
