@@ -346,28 +346,52 @@ footer {
     pointer-events: none;
 }
 
-.mascot-pre-title {
+
+
+.hero-lead-in {
     font-family: var(--font-body);
-    font-size: 1.2rem;
+    font-weight: 300;
+    font-size: 1.1rem;
     text-transform: uppercase;
-    letter-spacing: 0.4em;
-    color: #fff;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.85);
+    /* Silver/White */
     margin-bottom: 0.5rem;
     display: block;
-    font-weight: 500;
+    animation: fadeInUp 1s ease-out 0.2s forwards;
+    opacity: 0;
 }
 
-.christmas-title {
-    font-family: 'Great Vibes', cursive;
-    font-size: clamp(5rem, 10vw, 8rem);
-    line-height: 1.1;
+.hero-main-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    font-size: clamp(4rem, 8vw, 7rem);
+    line-height: 1.05;
     color: #fff;
-    margin-left: -10px;
-    /* Aligns script font visual weight */
-    margin-bottom: 0.5rem;
+    margin-bottom: 2rem;
+    letter-spacing: -0.03em;
+    /* Tight editorial spacing */
     opacity: 0;
-    animation: fadeInUp 1s ease-out 0.5s forwards;
-    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 1s ease-out 0.4s forwards;
+}
+
+.gold-text-premium {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    /* Elegant emphasis */
+    background: linear-gradient(to right,
+            #bf953f,
+            #fcf6ba,
+            #b38728,
+            #fbf5b7,
+            #aa771c);
+    /* Realistic Metallic Gold */
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+    padding-right: 0.1em;
+    /* Prevent clip cut-off */
 }
 
 .christmas-subtitle {

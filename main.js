@@ -187,10 +187,16 @@ loadingManager.onLoad = () => {
     });
 
     if (loaderContent && beamCore && beamFlare && preloader) {
-        tl.to(loaderContent, { opacity: 0, duration: 0.5 })
-            .to(beamCore, { width: '100%', duration: 0.8, ease: "power4.inOut" }, "-=0.2")
-            .to(beamFlare, { width: '200vw', height: '200vw', opacity: 1, duration: 1, ease: "power2.out" }, "<")
-            .to(preloader, { opacity: 0, duration: 1.5, ease: "power2.inOut" }, "-=0.5");
+        tl.to(loaderContent, { scale: 1.5, opacity: 0, duration: 0.6, ease: "power3.in" }) // Zoom into text
+            .to(beamCore, { width: '100%', height: '2px', duration: 0.6, ease: "expo.in" }, "-=0.4")
+            .to(beamFlare, {
+                width: '300vw',
+                height: '300vw',
+                opacity: 1,
+                duration: 0.8,
+                ease: "expo.out"
+            }, "<")
+            .to(preloader, { opacity: 0, duration: 1.0, ease: "power2.out" }, "-=0.5"); // Quicker reveal
     } else {
         // Fallback if elements missing
         if (preloader) preloader.style.display = 'none';
@@ -585,7 +591,7 @@ const tl = gsap.timeline({
         trigger: "#main-wrapper",
         start: "top top",
         end: "bottom bottom",
-        scrub: 1.5,
+        scrub: 1.0, // More responsive (was 1.5)
         // snap: 1 / 4 // Optional: snap to sections
     }
 });
@@ -597,14 +603,14 @@ tl.to(heroGroup.position, {
     y: 0.0,
     z: 1, // Bring closer
     duration: 1.5,
-    ease: "power2.inOut"
+    ease: "power3.inOut"
 }, "scene0")
     .to(heroGroup.rotation, {
         x: 0,
         y: 0.2, // Face front-right gently
         z: 0,
         duration: 1.5,
-        ease: "power2.inOut"
+        ease: "power3.inOut"
     }, "scene0")
     // Ensure camera looks solid
     .to(camera.position, {
@@ -624,8 +630,10 @@ tl.to(camera.position, {
     y: 0,
     z: 10,
     duration: 0.5,
-    ease: "power2.in"
+    ease: "expo.in"
 }, "scene1")
+    // Hide Particles
+    .to([softSnowMat, dustMat, starsMat], { opacity: 0, duration: 0.5 }, "scene1")
     // Close Curtains
     .to([leftCurtain, rightCurtain], { scaleX: 1, duration: 0.8, ease: "circ.inOut" }, "scene1+=0.3")
 
@@ -642,7 +650,12 @@ tl.to(camera.position, {
         x: 1, y: 1, z: 1,
         duration: 1.5,
         ease: "back.out(1.2)"
-    }, "scene1+=1.5");
+    }, "scene1+=1.5")
+
+    // Restore Particles
+    .to(softSnowMat, { opacity: 0.7, duration: 1.5 }, "scene1+=1.5")
+    .to(dustMat, { opacity: 0.5, duration: 1.5 }, "scene1+=1.5")
+    .to(starsMat, { opacity: 0.8, duration: 1.5 }, "scene1+=1.5");
 
 
 // Scene 2: Crystal Orb -> Forge
@@ -652,7 +665,7 @@ tl.to(camera.position, {
     y: 4,
     z: 5,
     duration: 1.5,
-    ease: "power2.inOut"
+    ease: "power3.inOut"
 }, "scene2")
     .to(cameraTarget, {
         x: 20,
@@ -700,7 +713,7 @@ tl.to(camera.position, {
     y: 3,
     z: 2,
     duration: 1.5,
-    ease: "power2.inOut"
+    ease: "power3.inOut"
 }, "scene3")
     // Hide Forge
     .to(forgeGroup.scale, {
@@ -727,8 +740,10 @@ window.addEventListener('resize', () => {
 
 // --- Lenis ---
 const lenis = new Lenis({
-    duration: 2.5,
+    duration: 1.5, // Heavier, smoother feel
     easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    wheelMultiplier: 1.2, // Faster response to input
 });
 lenis.on('scroll', ScrollTrigger.update);
 gsap.ticker.add((time) => {
@@ -757,10 +772,10 @@ function animate(time) {
     for (let i = 0; i < dataInstances; i++) {
         dataBlocks.getMatrixAt(i, dummy.matrix);
         dummy.matrix.decompose(dummy.position, dummy.quaternion, dummy.scale);
-
+ 
         dummy.position.y += 0.05 + (Math.random() * 0.05);
         if (dummy.position.y > 10) dummy.position.y = -10;
-
+ 
         dummy.updateMatrix();
         dataBlocks.setMatrixAt(i, dummy.matrix);
     }
