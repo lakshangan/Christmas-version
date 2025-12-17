@@ -480,6 +480,14 @@ const mouse = new THREE.Vector2();
 
 window.addEventListener('click', onDocClick);
 
+const claimBtn = document.getElementById('claim-stake-btn');
+if (claimBtn) {
+    claimBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent raycast click
+        openGift();
+    });
+}
+
 // Close button logic
 const closeBtn = document.getElementById('close-letter');
 if (closeBtn) {
@@ -612,6 +620,13 @@ const tl = gsap.timeline({
     }
 });
 
+
+
+
+
+
+
+
 // Scene 0: Video Hero -> Mascot Showcase (Vertical Reveal to "Side" Spot)
 // 1. Move Sleigh Up & Right (Proper Right Position)
 tl.to(heroGroup.position, {
@@ -706,7 +721,8 @@ tl.to(camera.position, {
     // Open Curtains
     .to([leftCurtain, rightCurtain], { scaleX: 0, duration: 0.8, ease: "circ.inOut" }, "scene1+=1.2")
 
-    // Reveal Crystal Orb
+    // Reveal Crystal Orb (Shifted Left for layout)
+    .to(crystalGroup.position, { x: -6, duration: 0 }, "scene1+=1.5") // Instant set before scale up or animate if preferred
     .to(crystalGroup.scale, {
         x: 1, y: 1, z: 1,
         duration: 1.5,
@@ -716,7 +732,15 @@ tl.to(camera.position, {
     // Restore Particles
     .to(softSnowMat, { opacity: 0.7, duration: 1.5 }, "scene1+=1.5")
     .to(dustMat, { opacity: 0.5, duration: 1.5 }, "scene1+=1.5")
-    .to(starsMat, { opacity: 0.8, duration: 1.5 }, "scene1+=1.5");
+    .to(starsMat, { opacity: 0.8, duration: 1.5 }, "scene1+=1.5")
+
+    // Reveal Crystalline Content
+    .to("#crystalline-network .content-block", {
+        opacity: 1,
+        y: 0,
+        duration: 1.0,
+        ease: "power2.out"
+    }, "scene1+=1.5");
 
 
 // Scene 2: Crystal Orb -> Forge
@@ -761,12 +785,51 @@ tl.to(camera.position, {
     .to(beaconLight, {
         intensity: 3,
         duration: 0.3
-    }, "scene2+=1.3");
+    }, "scene2+=1.3")
 
-// Ensure Santa is hidden here too (safety)
-// .to(heroGroup.scale, { x: 0, y: 0, z: 0, duration: 0 }, "scene2");
+    // Reveal Forge Content
+    .to("#model-factory-forge .content-block", {
+        opacity: 1,
+        y: 0,
+        duration: 1.0,
+        ease: "power2.out"
+    }, "scene2+=1.0");
 
-// Scene 3: Forge -> Gift
+// --- NEW SECTION: GIFT TEASER (Scene 2.5) ---
+tl.to({}, { duration: 0.5 }, ">") // Pause
+
+    // 1. Hide Forge Content
+    .to("#model-factory-forge .content-block", { opacity: 0, y: -20, duration: 0.5 }, "sceneTeaser")
+    // Hide Forge 3D
+    .to(forgeGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 }, "sceneTeaser")
+    .to(camera.position, { // Fly transition
+        x: 0,
+        y: 5,
+        z: 30, // Way back
+        duration: 2.0,
+        ease: "power2.inOut"
+    }, "sceneTeaser")
+
+    // 2. Reveal Teaser Text
+    .to("#gift-teaser .center-content", {
+        opacity: 1,
+        y: 0,
+        duration: 1.0,
+        ease: "power2.out"
+    }, "sceneTeaser+=0.5")
+
+    // Pause for reading
+    .to({}, { duration: 1.5 })
+
+    // 3. Hide Teaser Text
+    .to("#gift-teaser .center-content", {
+        opacity: 0,
+        y: -20,
+        duration: 0.5
+    }, "sceneTeaserEnd");
+
+
+// Scene 3: Teaser -> Gift
 // Gift at (-15, 0.75, -5)
 // SIMPLIFIED TRANSITION: Just slide camera to Gift, standard view.
 tl.to(camera.position, {
@@ -789,7 +852,16 @@ tl.to(camera.position, {
         z: -5,
         duration: 1.5,
         ease: "power2.inOut"
-    }, "scene3");
+    }, "scene3")
+
+    // Reveal Gift Content - Staggered
+    .to("#artifact-reveal .center-content h2, #artifact-reveal .center-content p, #artifact-reveal .center-content button, #artifact-reveal .instruction-text", {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        stagger: 0.1, // Nice ripple effect
+        ease: "power2.out"
+    }, "scene3+=0.5");
 
 
 // --- Window Resize ---

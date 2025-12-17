@@ -364,12 +364,14 @@ section {
     margin-bottom: 1.5rem;
     color: #fff;
     /* Crisp White */
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 .content-block p {
     font-size: 1.1rem;
     line-height: 1.6;
     opacity: 0.9;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
 }
 
 .center-content {
@@ -399,6 +401,22 @@ footer {
     background: #000;
     /* Fallback */
     overflow: hidden;
+}
+
+/* Initially hide content to reveal after transitions */
+#crystalline-network .content-block,
+#model-factory-forge .content-block,
+#gift-teaser .center-content,
+#artifact-reveal .center-content>* {
+    /* Target children for stagger */
+    opacity: 0;
+    transform: translateY(20px);
+    /* Optional: subtle slide up */
+}
+
+#video-hero {
+    /* Background handled by video */
+    z-index: 5;
 }
 
 #mascot-showcase {
@@ -496,28 +514,21 @@ footer {
     font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    /* Reduced from 0.3em for cleaner look */
     color: var(--color-gold);
-    /* Match prompt "clean" but gold is nice accent */
     margin-bottom: 1.5rem;
-    /* More breathing room */
     display: block;
     opacity: 0;
-    /* JS will reveal */
 }
 
 .hero-main-title {
     font-family: 'Playfair Display', serif;
     font-weight: 500;
     font-size: clamp(3.5rem, 8vw, 6.5rem);
-    /* Slightly smaller clamping for elegance */
     line-height: 1.1;
     color: #fff;
     margin-bottom: 2.5rem;
-    /* Increased spacing */
     letter-spacing: -0.02em;
     opacity: 0;
-    /* JS will reveal */
 }
 
 .gold-text-premium {
@@ -539,20 +550,13 @@ footer {
 .christmas-subtitle {
     font-family: var(--font-body);
     font-size: 1.15rem;
-    /* Slightly larger for readability */
-    /* text-transform: uppercase; REMOVED for clean minimal look */
     letter-spacing: 0.02em;
-    /* Normal spacing */
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.8);
-    /* Softer white */
     margin-bottom: 3rem;
-    /* More space before button */
     font-weight: 300;
     max-width: 480px;
-    /* Constrain width for readability */
     opacity: 0;
-    /* JS will reveal */
 }
 
 .mascot-description {
@@ -567,20 +571,19 @@ footer {
 
 .premium-btn {
     display: inline-block;
-    padding: 1rem 2.5rem;
-    /* Slightly tighter */
-    font-size: 0.85rem;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    /* Thinner border */
+    padding: 1rem 3rem;
+    font-size: 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     color: #fff;
     text-transform: uppercase;
-    letter-spacing: 0.15em;
-    border-radius: 2px;
-    /* Slight rounding for friendly-minimal */
-    transition: all 0.4s ease;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    border-radius: 50px;
+    font-weight: 500;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     cursor: pointer;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
     opacity: 0;
     /* JS will reveal */
 }
@@ -588,9 +591,8 @@ footer {
 .premium-btn:hover {
     background: #fff;
     color: #000;
-    /* High contrast black instead of red */
     border-color: #fff;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
 }
 
