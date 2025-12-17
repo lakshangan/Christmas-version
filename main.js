@@ -454,6 +454,7 @@ loader.load('/Gift Box.glb', (gltf) => {
         }
     });
 
+    giftModel.scale.set(2.5, 2.5, 2.5); // Make gift box much bigger
     giftGroup.add(giftModel);
 }, undefined, (error) => {
     console.error("Error loading Gift Box:", error);
@@ -630,63 +631,200 @@ const santaMessages = [
     "Intern Santa here! I snuck this gift onto the ledger just for you. Don't tell the big guy. Verified and immutable joy!"
 ];
 
+// --- Greeting Card Logic ---
+let userName = "Builder"; // Default
+
 function openGift() {
+    // BYPASS MODAL FOR NOW - Focus on Cinematic Reveal
+    revealGiftSequence();
+}
+
+function revealGiftSequence() {
     isGiftOpen = true;
 
-    // 0. Pick Random Message
+    // 0. Update Card Text for Poster Layout
     const msgIndex = Math.floor(Math.random() * santaMessages.length);
     const messageBody = document.querySelector('.santa-body');
-    if (messageBody) messageBody.innerText = `"${santaMessages[msgIndex]}"`;
+    if (messageBody) messageBody.innerText = "SPECIAL GUEST · 25 DEC\n" + `"${santaMessages[msgIndex]}"` + "\nHosted by OpenLedger";
 
-    // 1. Hide "Unwrap" UI (Fade Out Text)
+    const seasonGreeting = document.querySelector('.season-greeting');
+    if (seasonGreeting) seasonGreeting.innerText = "Merry";
+
+    const senderInfo = document.querySelector('.sender-info');
+    if (senderInfo) senderInfo.innerText = "Christmas"; // Main Title
+
+    const recipientSpan = document.getElementById('recipient-name');
+    if (recipientSpan) recipientSpan.innerText = userName;
+
+    // 1. Hide "Unwrap" UI & Navbar (Focus Mode)
     gsap.to("#artifact-reveal .center-content", { opacity: 0, duration: 0.5, pointerEvents: "none" });
+    gsap.to("nav", { opacity: 0, duration: 0.5 }); // Hide Navbar
 
-    // 2. MOVE GIFT TO CENTER (The "Arrival")
-    // Current gift pos: (-15, 2.0, -5)
-    // Camera is looking at (-5, 2.0, -5). We move gift to match camera focus or move camera to it.
-    // Let's move Gift to ( -5, 2.0, -5 ) -> Center of view
+    // 2. CINEMATIC MOVE (Gift & Camera)
+    // Move Gift to Absolute Center
     gsap.to(giftGroup.position, {
+        x: -5, // Align with camera target center
+        y: 2.0,
+        z: 0,  // Move closer to camera
+        duration: 2.0,
+        ease: "power2.inOut"
+    });
+
+    // Move Camera to Center Close-Up
+    gsap.to(camera.position, {
         x: -5,
         y: 2.0,
-        z: -2,  // Bring it closer
-        duration: 1.2,
+        z: 8, // Zoom In 
+        duration: 2.0,
         ease: "power2.inOut",
         onComplete: () => {
-            // 3. Vanish Gift (Explode/Scale Down) AFTER consistent arrival
-            gsap.to(giftModel.scale, { x: 0, y: 0, z: 0, duration: 0.4, ease: "back.in(2)" });
+            // 3. UNWRAP ANIMATION (Scale Up then Poof)
+            gsap.to(giftModel.scale, {
+                x: 1.2, y: 1.2, z: 1.2, // Swell up
+                duration: 0.3,
+                yoyo: true,
+                repeat: 1
+            });
 
-            // 4. Confetti Explosion
-            setTimeout(explodeConfetti, 300);
+            // Spin fast
+            gsap.to(giftGroup.rotation, {
+                y: giftGroup.rotation.y + Math.PI * 4,
+                duration: 0.8,
+                ease: "power3.in"
+            });
 
-            // 5. Show Letter Overlay
+            // EXPLODE
             setTimeout(() => {
-                const letter = document.getElementById('santa-letter');
-                if (letter) letter.classList.add('active');
+                gsap.to(giftModel.scale, { x: 0, y: 0, z: 0, duration: 0.2, ease: "back.in(2)" });
+                explodeConfetti();
+
+                // 5. Show Letter (Greeting Card Animated Entrance)
+                setTimeout(() => {
+                    const letter = document.getElementById('santa-letter');
+                    if (letter) {
+                        letter.classList.add('active'); // Set display flex
+
+                        // Reset initial states for replay
+                        gsap.set(".season-greeting, .sender-info, .recipient-box, .santa-body, .card-footer-decor, .card-actions", { opacity: 0, y: 20, scale: 0.95 });
+                        gsap.set(letter, { scale: 0.8, opacity: 0 });
+
+                        const cardTl = gsap.timeline();
+
+                        // 1. Pop Card Container
+                        cardTl.to(letter, { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" })
+
+                            // 2. Animate Text Elements Sequentially (Exact Layout Match)
+                            .to(".season-greeting", { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power2.out" })
+                            .to(".sender-info", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, "-=0.2") // "Christmas"
+                            .to(".recipient-box", { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, "-=0.2") // "Recip Name"
+                            .to(".santa-body", { opacity: 1, y: 0, scale: 1, duration: 0.5 }, "-=0.2")
+                            .to(".card-actions", { opacity: 1, y: 0, duration: 0.5 }, "-=0.1");
+                    }
+                }, 800);
             }, 800);
         }
     });
-
-    // Optional: Rotate while moving
-    gsap.to(giftGroup.rotation, { y: Math.PI * 2, duration: 1.2, ease: "power1.inOut" });
 }
+
+// Event Listeners for Modal
+// Event Listeners for Modal
+// Use explicit logic to ensuring binding
+setTimeout(() => {
+    const submitNameBtn = document.getElementById('submit-name-btn');
+    const usernameInput = document.getElementById('username-input');
+
+    if (submitNameBtn && usernameInput) {
+        submitNameBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (usernameInput.value.trim() !== "") {
+                userName = usernameInput.value.trim();
+            }
+            revealGiftSequence();
+        };
+
+        // Enter key support
+        usernameInput.onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                e.stopPropagation();
+                if (usernameInput.value.trim() !== "") {
+                    userName = usernameInput.value.trim();
+                }
+                revealGiftSequence();
+            }
+        };
+        console.log("Modal Listeners Attached");
+    } else {
+        console.error("Modal Elements not found!");
+    }
+
+    // Download Card Logic
+    const downloadBtn = document.getElementById('download-card-btn');
+    if (downloadBtn) {
+        downloadBtn.onclick = (e) => {
+            e.stopPropagation();
+            const cardElement = document.getElementById('santa-letter');
+
+            // Hide buttons for capture
+            const actions = document.querySelector('.card-actions');
+            if (actions) actions.style.display = 'none';
+
+            // Debug check
+            if (typeof html2canvas === 'undefined') {
+                alert("Greeting Card generator is loading... please try again in a moment.");
+                if (actions) actions.style.display = 'flex';
+                return;
+            }
+
+            // Capture
+            html2canvas(cardElement, {
+                backgroundColor: null,
+                scale: 2,
+                useCORS: true // Try to handle images better
+            }).then(canvas => {
+                // Restore buttons
+                if (actions) actions.style.display = 'flex';
+
+                // Trigger Download
+                const link = document.createElement('a');
+                link.download = `OpenLedger-Gift-${userName}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(err => {
+                console.error("Capture failed:", err);
+                if (actions) actions.style.display = 'flex';
+            });
+        };
+        console.log("Download Listener Attached");
+    }
+}, 500); // Small delay to ensure DOM is ready/stable
 
 function closeGift() {
     isGiftOpen = false;
 
     // 1. Hide Letter
     const letter = document.getElementById('santa-letter');
-    if (letter) letter.classList.remove('active');
+    if (letter) {
+        letter.classList.remove('active');
+        gsap.to(letter, { opacity: 0, scale: 0.8, duration: 0.3 });
+    }
 
-    // 2. Restore Gift (Pop back in at ORIGINAL Left Position)
-    // Reset Position first (instantly or quickly)
-    // We want it to re-appear at the "Side" location for the next interaction
-    gsap.to(giftGroup.position, { x: -15, y: 2.0, z: -5, duration: 1.0, ease: "power2.inOut" });
+    // 2. Restore View (Zoom Out)
+    gsap.to(camera.position, { x: -5, y: 2.0, z: 12, duration: 1.5, ease: "power2.inOut" });
+
+    // 3. Restore Gift (Pop back in at Left)
+    gsap.to(giftGroup.position, { x: -15, y: 2.0, z: -5, duration: 1.5, ease: "power2.inOut" });
+    gsap.to(giftGroup.rotation, { y: 0, duration: 1.5 }); // Reset rotation
 
     // Scale Up
-    gsap.to(giftModel.scale, { x: 1, y: 1, z: 1, duration: 0.8, delay: 0.5, ease: "elastic.out(1, 0.5)" });
+    gsap.to(giftModel.scale, { x: 2.5, y: 2.5, z: 2.5, duration: 0.8, delay: 0.5, ease: "elastic.out(1, 0.5)" });
 
-    // 3. Restore UI
+    // 4. Restore UI
     gsap.to("#artifact-reveal .center-content", { opacity: 1, duration: 0.5, delay: 1.0, pointerEvents: "all" });
+    gsap.to("nav", { opacity: 1, duration: 0.5 }); // Show Navbar
+
+    // Clear Input
+    if (typeof usernameInput !== 'undefined' && usernameInput) usernameInput.value = "";
+    userName = "Builder"; // Reset default
 }
 
 
@@ -916,16 +1054,16 @@ tl.to({}, { duration: 0.5 }, ">") // Pause
 // Scene 3: Teaser -> Gift (SPLIT VIEW)
 // Gift Box at (-15, 2.0, -5) -> We will frame it on the LEFT
 tl.to(camera.position, {
-    x: -8,  // Adjusted for split layout
+    x: -5,  // Centered/Left-ish for better framing (was -8)
     y: 2.0,
-    z: 10,
+    z: 12,  // Zoom out slightly to see whole box
     duration: 1.5,
     ease: "power2.inOut"
 }, "scene3")
     // Hide Forge/Teaser if not already hidden
     .to(forgeGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 }, "scene3")
     .to(cameraTarget, {
-        x: -5,  // Look between gift (left) and text (right)
+        x: -5,  // Look at center-ish
         y: 2.0,
         z: -5,
         duration: 1.5,
@@ -1019,9 +1157,11 @@ function animate(time) {
 
     // Gift Animation (Idle Float)
     if (giftGroup) {
-        giftGroup.position.y = 0.75 + Math.sin(t * 1) * 0.1;
         if (!isGiftOpen) {
-            giftGroup.rotation.y = t * 0.2; // Slow rotate idle
+            // Only float/rotate when IDLE. 
+            // When open (isGiftOpen = true), GSAP controls position completely.
+            giftGroup.position.y = 2.0 + Math.sin(t * 1) * 0.1; // Base 2.0 matches setup
+            giftGroup.rotation.y = t * 0.2;
         }
     }
 

@@ -12,6 +12,7 @@
     href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Outfit:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="/preloader.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <!-- Cinematic Christmas Preloader -->
   <div id="preloader">
     <div class="loader-content">
@@ -128,18 +129,46 @@
         <p class="instruction-text">Tap the Gift to Open</p>
       </div>
 
-      <div id="santa-letter" class="santa-card">
-        <div class="santa-header">
-          <span class="santa-icon">🎄</span>
-          <h3>FROM THE DESK OF <br> <span style="color: var(--color-gold);">INTERN SANTA</span></h3>
+      <!-- 1. Username Modal (Initially Hidden) -->
+      <div id="username-modal" class="center-content glass-modal" style="display: none; opacity: 0; z-index: 20;">
+        <h2 style="font-size: 2rem; margin-bottom: 1rem;">Who is this gift for?</h2>
+        <input type="text" id="username-input" placeholder="Enter your name" autocomplete="off">
+        <button id="submit-name-btn" class="premium-btn" style="margin-top: 1.5rem;">REVEAL MY GIFT</button>
+      </div>
+
+      <!-- 2. Sharable Card (Animated Layout) -->
+      <div id="santa-letter" class="sharable-card">
+        <div class="card-content-wrapper">
+          <h1 class="season-greeting">Merry Christmas</h1>
+          <h3 class="sender-info">FROM THE OPENLEDGER TEAM</h3>
+
+          <div class="recipient-box">
+            <span class="to-label">To</span>
+            <span id="recipient-name" class="recipient-name">Builder</span>
+          </div>
+
+          <p class="santa-body">
+            "Ho Ho Ho! While the elves are busy making toys, we're busy making history. Your data is now yours forever."
+          </p>
+
+          <div class="card-footer-decor">
+            <span class="decor-line"></span>
+            <span class="brand-mark">OPENLEDGER 2025</span>
+            <span class="decor-line"></span>
+          </div>
+
+          <div class="card-actions">
+            <button id="download-card-btn" class="action-btn download">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              Save Card
+            </button>
+            <button id="close-letter" class="action-btn close">Close</button>
+          </div>
         </div>
-        <p class="santa-body">
-          "Ho Ho Ho! You've discovered the ultimate gift.<br><br>
-          In a world of noise, you found the signal. Truly verified intelligence is the magic of the future.
-          Your curiosity has unlocked the OpenLedger Origin.<br><br>
-          Merry Christmas and Happy Building!"
-        </p>
-        <button id="close-letter">Keep the Magic</button>
       </div>
     </section>
 
