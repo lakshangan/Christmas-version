@@ -401,6 +401,43 @@ footer {
     overflow: hidden;
 }
 
+#mascot-showcase {
+    /* Premium Red Gradient from Reference to fix Black Background */
+    background: radial-gradient(circle at 50% 50%, #8a1c1c 0%, #4a0808 100%);
+    z-index: 5;
+    /* Ensure it covers the previous section cleanly */
+}
+
+/* Scroll Transition Curtain - Removed */
+/* .transition-shutter { ... } */
+
+.mascot-text-col {
+    flex: 1;
+    z-index: 10;
+    color: white;
+    text-align: left;
+    padding-right: 2rem;
+    /* Matches Hero layout */
+    opacity: 0;
+    /* Animated in */
+    transform: translateY(30px);
+}
+
+.mascot-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.mascot-desc {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    max-width: 500px;
+}
+
 .hero-video-bg {
     position: absolute;
     /* Keeps it in the section flow, not fixed globally to prevent it appearing in other sections */

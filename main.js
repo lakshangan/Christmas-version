@@ -233,7 +233,7 @@ loader.load('/santa_sleigh.glb', (gltf) => {
     santaModel.position.y += (santaModel.position.y - center.y);
     santaModel.position.z += (santaModel.position.z - center.z);
 
-    // Normalize scale to fit roughly in 7 units (Increased size per user request)
+    // Normalize scale to fit roughly in 7 units (Standard Size)
     const maxDim = Math.max(size.x, size.y, size.z);
     const scaleFactor = 7 / maxDim;
     santaModel.scale.setScalar(scaleFactor);
@@ -293,8 +293,8 @@ highlightGroup.add(highlightSpot);
 heroGroup.add(highlightGroup);
 
 // Place on RIGHT side initially - ALIGNED with Nav Items (Vision/Tech)
-// STARTS OFF-SCREEN for Cinematic Video Reveal
-heroGroup.position.set(20, 1.5, 0); // Far right (Hidden)
+// STARTS BELOW SCREEN (Vertical Scroll Effect)
+heroGroup.position.set(0, -20, 0); // Far below
 heroGroup.rotation.set(0.1, -1.0, 0); // Semi right side view (3/4 angle)
 scene.add(heroGroup);
 
@@ -589,6 +589,9 @@ function closeGift() {
     // 3. Reset Camera (Back to Scene 3 view)
     gsap.to(camera.position, { x: -12, y: 0.75, z: 0, duration: 1.5 });
     gsap.to(cameraTarget, { x: -15, y: 0.75, z: -5, duration: 1.5 });
+
+    // Dim Light
+    gsap.to(internalLight, { intensity: 0, duration: 1.0 });
 }
 
 
@@ -606,35 +609,68 @@ const tl = gsap.timeline({
     }
 });
 
-// Scene 0: Mascot -> Hero (Right to Center)
-// Scene 0: Video -> 3D Hero Entrance
-// 1. Move Sleigh IN from Right
+// Scene 0: Video Hero -> Mascot Showcase (Vertical Reveal to "Side" Spot)
+// 1. Move Sleigh Up & Right (Proper Right Position)
 tl.to(heroGroup.position, {
-    x: 1.5, // Center-Right (Classic Hero Spot)
-    y: 0.0,
-    z: 1,
-    duration: 2.0, // Slow, majestic entry
-    ease: "power3.out"
+    x: 3.5, // Move to Right Side (align with spacer column)
+    y: 1.0,
+    z: 0,
+    duration: 2.0,
+    ease: "power2.out"
 }, "scene0")
-    // 2. Rotate to face user
+    // 2. Rotate Sleigh (Side/3-4 View)
     .to(heroGroup.rotation, {
-        x: 0,
-        y: -0.2, // Slight angle
-        z: 0,
+        x: 0.05,
+        y: -0.8, // Angled towards user
+        z: 0.0,
         duration: 2.0,
-        ease: "power3.out"
+        ease: "power2.inOut"
     }, "scene0")
-    // 3. Fade Out Video (via CSS Class toggle or opacity tween if accessible, 
-    // but here we let the scroll handle the visual shift naturally. Video stays fixed, 3D slides over).
-
-    // 4. Camera slightly adjusts to frame the sleigh
+    // 3. Camera Move (Framing the Right Side)
     .to(camera.position, {
-        x: 0,
-        y: 2,
+        x: 0, // Keep camera center to see both text and model
+        y: 1.5,
         z: 9,
         duration: 2.0,
         ease: "power2.inOut"
-    }, "scene0");
+    }, "scene0")
+    // 4. Reveal Text 
+    .to(".mascot-text-col", {
+        y: 0,
+        opacity: 1,
+        duration: 1.0,
+        ease: "power2.out"
+    }, "scene0+=0.5");
+
+// --- Scroll Spacer (Pause) ---
+// Add a dummy tween to keep the state for a bit of scrolling
+tl.to({}, { duration: 0.5 }, ">");
+
+// Scene 0.5: Mascot (Right) -> center (For "Truth of Winter")
+// Move Sleigh to Center
+tl.to(heroGroup.position, {
+    x: 0, // Center
+    y: 0.5, // Slightly lower
+    z: 0, // Keep distance (was 2 which was too close)
+    duration: 1.5,
+    ease: "power2.inOut"
+}, "sceneCenter")
+    .to(heroGroup.rotation, {
+        x: 0.05, // Slight tilt down to see more
+        y: -0.2, // Slight angle is better than flat 0
+        z: 0.0,
+        duration: 1.5,
+        ease: "power2.inOut"
+    }, "sceneCenter")
+    .to(camera.position, {
+        x: 0,
+        y: 1.5, // Keep eye level
+        z: 11, // Pull back to see full model (was 7)
+        duration: 1.5
+    }, "sceneCenter");
+
+// Pause again for "Truth of Winter" reading
+tl.to({}, { duration: 1.0 }, ">");
 
 // Scene 1: Hero -> Crystalline Network (Curtain Transition)
 const leftCurtain = document.querySelector('.curtain-left');
@@ -716,6 +752,13 @@ tl.to(camera.position, {
         intensity: 3,
         duration: 0.3
     }, "scene2+=1.3");
+
+// Parallax Reveal (Opposite Direction Text)
+tl.fromTo(".forge-section .content-block",
+    { y: 100, opacity: 0 },
+    { y: -50, opacity: 1, duration: 2.0, ease: "none" }, // Moves UP while you scroll down
+    "scene2"
+);
 
 // Scene 3: Forge -> Gift
 // Gift at (-15, 0.75, -5)
@@ -831,13 +874,11 @@ function animate(time) {
     }
     if (forgeGroup) {
         forgeGroup.position.y = 2 + Math.sin(t * 0.5) * 0.2; // Gentle Float
-        // Maybe rotate the dock ring?
-        if (forgeGroup.children[4]) { // dockRing is likely index 4 or similar, lets search by type or var if strictly needed, but simple is ok here or just access child
-            // Actually, I can't access 'dockRing' var here as it is scoped.
-            // But I added it to forgeGroup.
-            // Let's just rotate the whole group slightly or nothing.
-        }
     }
+
+    // Update Fog based on scroll or camera position if needed manually, 
+    // but GSAP usually handles the timeline better.
+    // Ensure fog density matches the "Deep Field" feel.
 
     camera.lookAt(cameraTarget);
     renderer.render(scene, camera);
