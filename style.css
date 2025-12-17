@@ -418,9 +418,8 @@ footer {
     text-align: left;
     padding-right: 2rem;
     /* Matches Hero layout */
-    opacity: 0;
-    /* Animated in */
-    transform: translateY(30px);
+    /* opacity: 0; REMOVED - Children handled individually now */
+    /* transform: translateY(30px); REMOVED */
 }
 
 .mascot-title {
@@ -493,13 +492,15 @@ footer {
 
 .hero-lead-in {
     font-family: var(--font-body);
-    font-weight: 300;
-    font-size: 1.1rem;
+    font-weight: 400;
+    font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.3em;
-    color: rgba(255, 255, 255, 0.85);
-    /* Silver/White */
-    margin-bottom: 0.5rem;
+    letter-spacing: 0.15em;
+    /* Reduced from 0.3em for cleaner look */
+    color: var(--color-gold);
+    /* Match prompt "clean" but gold is nice accent */
+    margin-bottom: 1.5rem;
+    /* More breathing room */
     display: block;
     opacity: 0;
     /* JS will reveal */
@@ -508,14 +509,13 @@ footer {
 .hero-main-title {
     font-family: 'Playfair Display', serif;
     font-weight: 500;
-    font-size: clamp(4rem, 8vw, 7rem);
-    line-height: 1.05;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    /* Slightly smaller clamping for elegance */
+    line-height: 1.1;
     color: #fff;
-    margin-bottom: 2rem;
-    letter-spacing: -0.04em;
-    /* Tighter for high-end feel */
-    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    /* Soft lifting shadow */
+    margin-bottom: 2.5rem;
+    /* Increased spacing */
+    letter-spacing: -0.02em;
     opacity: 0;
     /* JS will reveal */
 }
@@ -523,30 +523,36 @@ footer {
 .gold-text-premium {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    /* Elegant emphasis */
     background: linear-gradient(to right,
             #bf953f,
             #fcf6ba,
             #b38728,
             #fbf5b7,
             #aa771c);
-    /* Realistic Metallic Gold */
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     display: inline-block;
     padding-right: 0.1em;
-    /* Prevent clip cut-off */
 }
 
 .christmas-subtitle {
     font-family: var(--font-body);
-    font-size: 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.3em;
-    color: var(--color-gold);
-    margin-bottom: 2rem;
-    font-weight: 700;
+    font-size: 1.15rem;
+    /* Slightly larger for readability */
+    /* text-transform: uppercase; REMOVED for clean minimal look */
+    letter-spacing: 0.02em;
+    /* Normal spacing */
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    /* Softer white */
+    margin-bottom: 3rem;
+    /* More space before button */
+    font-weight: 300;
+    max-width: 480px;
+    /* Constrain width for readability */
+    opacity: 0;
+    /* JS will reveal */
 }
 
 .mascot-description {
@@ -556,29 +562,35 @@ footer {
     margin-bottom: 2.5rem;
     max-width: 90%;
     font-weight: 300;
+    opacity: 0;
 }
 
 .premium-btn {
     display: inline-block;
-    padding: 1.2rem 3rem;
-    font-size: 0.9rem;
+    padding: 1rem 2.5rem;
+    /* Slightly tighter */
+    font-size: 0.85rem;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    /* Thinner border */
     color: #fff;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
-    border-radius: 0;
-    /* Sharp, minimal */
+    letter-spacing: 0.15em;
+    border-radius: 2px;
+    /* Slight rounding for friendly-minimal */
     transition: all 0.4s ease;
     cursor: pointer;
     backdrop-filter: blur(5px);
+    opacity: 0;
+    /* JS will reveal */
 }
 
 .premium-btn:hover {
     background: #fff;
-    color: #8a0000;
+    color: #000;
+    /* High contrast black instead of red */
     border-color: #fff;
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
 }
 

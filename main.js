@@ -195,25 +195,28 @@ loadingManager.onLoad = () => {
             .to(preloader, { opacity: 0, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
 
             // Hero Entrance (Staggered & Smooth)
-            .fromTo(".hero-lead-in",
+            .fromTo("#video-hero .hero-lead-in",
                 { y: 30, opacity: 0 },
                 { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
                 "-=1.0")
-            .fromTo(".hero-main-title",
+            .fromTo("#video-hero .hero-main-title",
                 { y: 50, opacity: 0 },
                 { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
                 "-=1.0")
-            .fromTo(".mascot-description",
+            .fromTo("#video-hero .christmas-subtitle",
                 { y: 30, opacity: 0 },
-                { y: 0, opacity: 0.9, duration: 1.2, ease: "power3.out" },
+                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
                 "-=0.9")
-            .fromTo(".premium-btn",
+            .fromTo("#video-hero .premium-btn",
                 { y: 30, opacity: 0 },
                 { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
                 "-=0.9");
     } else {
         // Fallback if elements missing
         if (preloader) preloader.style.display = 'none';
+
+        // Force show hero elements in case preloader fails
+        gsap.set(["#video-hero .hero-lead-in", "#video-hero .hero-main-title", "#video-hero .christmas-subtitle", "#video-hero .premium-btn"], { opacity: 1, y: 0 });
     }
 };
 
@@ -330,7 +333,7 @@ for (let i = 0; i < nodesCount; i++) {
 }
 nodesGeo.setAttribute('position', new THREE.Float32BufferAttribute(nodesPos, 3));
 const nodesMat = new THREE.PointsMaterial({
-    color: 0xFF6600, // Electric Orange
+    color: 0x00F3FF, // Electric Blue
     size: 0.1,
     transparent: true,
     opacity: 0.8
@@ -342,7 +345,7 @@ crystalGroup.add(nodesMesh);
 // Purely decorative spinning lines inside
 const innerLinesGeo = new THREE.IcosahedronGeometry(2.5, 1);
 const innerLinesMat = new THREE.LineBasicMaterial({
-    color: 0xFF6600, // Electric Orange
+    color: 0x00F3FF, // Electric Blue
     transparent: true,
     opacity: 0.3
 });
@@ -634,11 +637,17 @@ tl.to(heroGroup.position, {
         duration: 2.0,
         ease: "power2.inOut"
     }, "scene0")
-    // 4. Reveal Text 
-    .to(".mascot-text-col", {
+    // 4. Reveal Text - STAGGERED
+    .to([
+        "#mascot-showcase .hero-lead-in",
+        "#mascot-showcase .hero-main-title",
+        "#mascot-showcase .christmas-subtitle",
+        "#mascot-showcase .premium-btn"
+    ], {
         y: 0,
         opacity: 1,
         duration: 1.0,
+        stagger: 0.1,
         ease: "power2.out"
     }, "scene0+=0.5");
 
