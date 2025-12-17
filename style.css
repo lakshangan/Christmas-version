@@ -426,8 +426,24 @@ footer {
     /* Ensure it covers the previous section cleanly */
 }
 
-/* Scroll Transition Curtain - Removed */
-/* .transition-shutter { ... } */
+/* Gift Reveal - Split Layout (Text Right) */
+#artifact-reveal .center-content {
+    position: absolute;
+    left: 65%;
+    /* Move to right side */
+    top: 50%;
+    /* Center vertically */
+    transform: translate(-50%, -50%);
+    /* Center on its own point */
+    width: 40%;
+    /* Squeeze text width */
+    z-index: 10;
+    text-align: left;
+    /* Align text left for readability */
+    padding: 2rem;
+    /* Optional: distinct background for text box */
+    /* background: rgba(0,0,0,0.4); */
+}
 
 .mascot-text-col {
     flex: 1;

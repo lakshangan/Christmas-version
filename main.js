@@ -470,7 +470,7 @@ const internalLight = new THREE.PointLight(0xffd700, 0, 5);
 internalLight.position.set(0, 0, 0);
 giftGroup.add(internalLight);
 
-giftGroup.position.set(-15, 0.75, -5);
+giftGroup.position.set(-15, 2.0, -5);
 scene.add(giftGroup);
 
 
@@ -552,37 +552,122 @@ function interactOctopus() {
     });
 }
 
+// --- confetti logic ---
+const confettiGeo = new THREE.BufferGeometry();
+const confettiCount = 200;
+const confettiPos = new Float32Array(confettiCount * 3);
+const confettiVel = [];
+for (let i = 0; i < confettiCount; i++) {
+    confettiPos[i * 3] = 0; confettiPos[i * 3 + 1] = 0; confettiPos[i * 3 + 2] = 0;
+    confettiVel.push(new THREE.Vector3(
+        (Math.random() - 0.5) * 0.5,
+        (Math.random() - 0.5) * 0.5 + 0.5, // Upward bias
+        (Math.random() - 0.5) * 0.5
+    ));
+}
+confettiGeo.setAttribute('position', new THREE.BufferAttribute(confettiPos, 3));
+const confettiMat = new THREE.PointsMaterial({
+    color: 0xffd700,
+    size: 0.15,
+    transparent: true,
+    opacity: 0
+});
+const confettiSystem = new THREE.Points(confettiGeo, confettiMat);
+giftGroup.add(confettiSystem);
+let animatingConfetti = false;
+
+function explodeConfetti() {
+    animatingConfetti = true;
+    confettiMat.opacity = 1;
+    const positions = confettiSystem.geometry.attributes.position.array;
+
+    // Reset positions to center of gift
+    for (let i = 0; i < confettiCount; i++) {
+        positions[i * 3] = 0;
+        positions[i * 3 + 1] = 0;
+        positions[i * 3 + 2] = 0;
+        // Reset velocities roughly
+        confettiVel[i].set(
+            (Math.random() - 0.5) * 10,
+            (Math.random() * 10),
+            (Math.random() - 0.5) * 10
+        );
+    }
+
+    confettiSystem.geometry.attributes.position.needsUpdate = true;
+
+    // Animate via GSAP ticker or simple loop in main animate
+    // For simplicity, let's use a quick tween-like object to drive the update in the main loop
+    let dummy = { t: 0 };
+    gsap.to(dummy, {
+        t: 1,
+        duration: 2.0,
+        onUpdate: () => {
+            const positions = confettiSystem.geometry.attributes.position.array;
+            for (let i = 0; i < confettiCount; i++) {
+                positions[i * 3] += confettiVel[i].x * 0.1;
+                positions[i * 3 + 1] += confettiVel[i].y * 0.1;
+                positions[i * 3 + 2] += confettiVel[i].z * 0.1;
+
+                confettiVel[i].y -= 0.2; // Gravity
+            }
+            confettiSystem.geometry.attributes.position.needsUpdate = true;
+        },
+        onComplete: () => {
+            gsap.to(confettiMat, { opacity: 0, duration: 0.5 });
+            animatingConfetti = false;
+        }
+    });
+}
+
+
+const santaMessages = [
+    "Ho Ho Ho! While the elves are busy making toys, we're busy making history. Your data is now yours forever. Merry Christmas!",
+    "Checking the ledger twice... looks like you've been Naughty-proofed by decentralization! Enjoy your ownership.",
+    "The best gift isn't under the tree, it's on the chain. Here's to a future that belongs to you. Happy Holidays!",
+    "Wrapped with encryption, delivered with trust. You've officially claimed your piece of the Open Future.",
+    "From the North Pole to the Node Network: May your transactions be fast and your gas fees low. Cheers!",
+    "Intern Santa here! I snuck this gift onto the ledger just for you. Don't tell the big guy. Verified and immutable joy!"
+];
+
 function openGift() {
     isGiftOpen = true;
 
-    // 1. Camera Move (Full Screen Focus)
-    // Zoom extremely close to center of gift, or slightly above
-    gsap.to(camera.position, {
-        x: -15,
-        y: 2,
-        z: -2, // Very close
-        duration: 1.5,
-        ease: "power2.inOut"
+    // 0. Pick Random Message
+    const msgIndex = Math.floor(Math.random() * santaMessages.length);
+    const messageBody = document.querySelector('.santa-body');
+    if (messageBody) messageBody.innerText = `"${santaMessages[msgIndex]}"`;
+
+    // 1. Hide "Unwrap" UI (Fade Out Text)
+    gsap.to("#artifact-reveal .center-content", { opacity: 0, duration: 0.5, pointerEvents: "none" });
+
+    // 2. MOVE GIFT TO CENTER (The "Arrival")
+    // Current gift pos: (-15, 2.0, -5)
+    // Camera is looking at (-5, 2.0, -5). We move gift to match camera focus or move camera to it.
+    // Let's move Gift to ( -5, 2.0, -5 ) -> Center of view
+    gsap.to(giftGroup.position, {
+        x: -5,
+        y: 2.0,
+        z: -2,  // Bring it closer
+        duration: 1.2,
+        ease: "power2.inOut",
+        onComplete: () => {
+            // 3. Vanish Gift (Explode/Scale Down) AFTER consistent arrival
+            gsap.to(giftModel.scale, { x: 0, y: 0, z: 0, duration: 0.4, ease: "back.in(2)" });
+
+            // 4. Confetti Explosion
+            setTimeout(explodeConfetti, 300);
+
+            // 5. Show Letter Overlay
+            setTimeout(() => {
+                const letter = document.getElementById('santa-letter');
+                if (letter) letter.classList.add('active');
+            }, 800);
+        }
     });
-    gsap.to(cameraTarget, {
-        x: -15, y: 1, z: -5,
-        duration: 1.5
-    });
 
-    // 2. Gift Animation (Float up and spin fast like opening)
-    gsap.to(giftGroup.position, { y: 2, duration: 1, ease: "back.out" });
-    gsap.to(giftGroup.rotation, { y: Math.PI * 4, duration: 2, ease: "power2.inOut" });
-
-    // 3. Light Burst
-    gsap.to(internalLight, { intensity: 10, duration: 0.5, yoyo: true, repeat: 1, delay: 1 });
-
-    // 4. Show Letter Overlay
-    setTimeout(() => {
-        const letter = document.getElementById('santa-letter');
-        const hint = document.getElementById('santa-instruction');
-        if (letter) letter.classList.add('active');
-        if (hint) hint.style.opacity = 0;
-    }, 1200);
+    // Optional: Rotate while moving
+    gsap.to(giftGroup.rotation, { y: Math.PI * 2, duration: 1.2, ease: "power1.inOut" });
 }
 
 function closeGift() {
@@ -590,19 +675,18 @@ function closeGift() {
 
     // 1. Hide Letter
     const letter = document.getElementById('santa-letter');
-    const hint = document.getElementById('santa-instruction');
     if (letter) letter.classList.remove('active');
-    if (hint) hint.style.opacity = 1;
 
-    // 2. Reset Gift
-    gsap.to(giftGroup.position, { y: 0.75, duration: 1, ease: "power2.out" });
+    // 2. Restore Gift (Pop back in at ORIGINAL Left Position)
+    // Reset Position first (instantly or quickly)
+    // We want it to re-appear at the "Side" location for the next interaction
+    gsap.to(giftGroup.position, { x: -15, y: 2.0, z: -5, duration: 1.0, ease: "power2.inOut" });
 
-    // 3. Reset Camera (Back to Scene 3 view)
-    gsap.to(camera.position, { x: -12, y: 0.75, z: 0, duration: 1.5 });
-    gsap.to(cameraTarget, { x: -15, y: 0.75, z: -5, duration: 1.5 });
+    // Scale Up
+    gsap.to(giftModel.scale, { x: 1, y: 1, z: 1, duration: 0.8, delay: 0.5, ease: "elastic.out(1, 0.5)" });
 
-    // Dim Light
-    gsap.to(internalLight, { intensity: 0, duration: 1.0 });
+    // 3. Restore UI
+    gsap.to("#artifact-reveal .center-content", { opacity: 1, duration: 0.5, delay: 1.0, pointerEvents: "all" });
 }
 
 
@@ -829,37 +913,31 @@ tl.to({}, { duration: 0.5 }, ">") // Pause
     }, "sceneTeaserEnd");
 
 
-// Scene 3: Teaser -> Gift
-// Gift at (-15, 0.75, -5)
-// SIMPLIFIED TRANSITION: Just slide camera to Gift, standard view.
+// Scene 3: Teaser -> Gift (SPLIT VIEW)
+// Gift Box at (-15, 2.0, -5) -> We will frame it on the LEFT
 tl.to(camera.position, {
-    x: -12, // Standard offset
-    y: 1.5, // Slight high angle
-    z: 5,   // Comfortable distance
+    x: -8,  // Adjusted for split layout
+    y: 2.0,
+    z: 10,
     duration: 1.5,
     ease: "power2.inOut"
 }, "scene3")
-    // Hide Forge
-    .to(forgeGroup.scale, {
-        x: 0,
-        y: 0,
-        z: 0,
-        duration: 0.5
-    }, "scene3")
+    // Hide Forge/Teaser if not already hidden
+    .to(forgeGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 }, "scene3")
     .to(cameraTarget, {
-        x: -15,
-        y: 0.75,
+        x: -5,  // Look between gift (left) and text (right)
+        y: 2.0,
         z: -5,
         duration: 1.5,
         ease: "power2.inOut"
     }, "scene3")
 
-    // Reveal Gift Content - Staggered
+    // Reveal Gift Content - Staggered (ON THE RIGHT)
     .to("#artifact-reveal .center-content h2, #artifact-reveal .center-content p, #artifact-reveal .center-content button, #artifact-reveal .instruction-text", {
         opacity: 1,
         y: 0,
         duration: 0.8,
-        stagger: 0.1, // Nice ripple effect
+        stagger: 0.1,
         ease: "power2.out"
     }, "scene3+=0.5");
 
