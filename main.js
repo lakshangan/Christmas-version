@@ -330,7 +330,7 @@ for (let i = 0; i < nodesCount; i++) {
 }
 nodesGeo.setAttribute('position', new THREE.Float32BufferAttribute(nodesPos, 3));
 const nodesMat = new THREE.PointsMaterial({
-    color: 0x00ffff, // Cyan
+    color: 0xFF6600, // Electric Orange
     size: 0.1,
     transparent: true,
     opacity: 0.8
@@ -342,7 +342,7 @@ crystalGroup.add(nodesMesh);
 // Purely decorative spinning lines inside
 const innerLinesGeo = new THREE.IcosahedronGeometry(2.5, 1);
 const innerLinesMat = new THREE.LineBasicMaterial({
-    color: 0x0088ff,
+    color: 0xFF6600, // Electric Orange
     transparent: true,
     opacity: 0.3
 });
