@@ -692,6 +692,7 @@ tl.to(camera.position, {
     .to(camera.position, { x: 0, y: 0, z: -5, duration: 0.1 }, "scene1+=1.1") // Teleport
     .to(cameraTarget, { x: 0, y: 0, z: -20, duration: 0.1 }, "scene1+=1.1")
     .to(highlightGroup.scale, { x: 0, y: 0, z: 0, duration: 0.1 }, "scene1+=1.1")
+    .to(heroGroup.scale, { x: 0, y: 0, z: 0, duration: 0.1 }, "scene1+=1.1") // HIDE SANTA (Scale 0 is safer)
 
     // Open Curtains
     .to([leftCurtain, rightCurtain], { scaleX: 0, duration: 0.8, ease: "circ.inOut" }, "scene1+=1.2")
@@ -753,21 +754,18 @@ tl.to(camera.position, {
         duration: 0.3
     }, "scene2+=1.3");
 
-// Parallax Reveal (Opposite Direction Text)
-tl.fromTo(".forge-section .content-block",
-    { y: 100, opacity: 0 },
-    { y: -50, opacity: 1, duration: 2.0, ease: "none" }, // Moves UP while you scroll down
-    "scene2"
-);
+// Ensure Santa is hidden here too (safety)
+// .to(heroGroup.scale, { x: 0, y: 0, z: 0, duration: 0 }, "scene2");
 
 // Scene 3: Forge -> Gift
 // Gift at (-15, 0.75, -5)
+// SIMPLIFIED TRANSITION: Just slide camera to Gift, standard view.
 tl.to(camera.position, {
-    x: -10,
-    y: 3,
-    z: 2,
+    x: -12, // Standard offset
+    y: 1.5, // Slight high angle
+    z: 5,   // Comfortable distance
     duration: 1.5,
-    ease: "power3.inOut"
+    ease: "power2.inOut"
 }, "scene3")
     // Hide Forge
     .to(forgeGroup.scale, {
@@ -778,7 +776,7 @@ tl.to(camera.position, {
     }, "scene3")
     .to(cameraTarget, {
         x: -15,
-        y: 1,
+        y: 0.75,
         z: -5,
         duration: 1.5,
         ease: "power2.inOut"
