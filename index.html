@@ -13,6 +13,10 @@
     rel="stylesheet">
   <link rel="stylesheet" href="/preloader.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="/preloader.js"></script>
+</head>
+
+<body class="loading">
   <!-- Cinematic Christmas Preloader -->
   <div id="preloader">
     <div class="loader-content">
@@ -226,7 +230,14 @@
       <p>&copy; 2025 OpenLedger. Built with festive precision.</p>
     </footer>
   </div>
+  <!-- Audio Elements -->
+  <audio id="reveal-sfx" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+  <audio id="holiday-bgm" src="https://assets.mixkit.co/music/preview/mixkit-jingle-bells-traditional-holiday-621.mp3"
+    loop preload="auto"></audio>
+  <audio id="transition-sfx" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"
+    preload="auto"></audio>
+
   <script type="module" src="/main.js"></script>
-  </body>
+</body>
 
 </html>

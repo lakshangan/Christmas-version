@@ -1104,7 +1104,18 @@ tl.to(camera.position, {
     // Hide Particles
     .to([softSnowMat, dustMat, starsMat], { opacity: 0, duration: 0.5 }, "scene1")
     // Close Curtains
-    .to([leftCurtain, rightCurtain], { scaleX: 1, duration: 0.8, ease: "circ.inOut" }, "scene1+=0.3")
+    .to([leftCurtain, rightCurtain], {
+        scaleX: 1,
+        duration: 0.8,
+        ease: "circ.inOut",
+        onStart: () => {
+            const transSfx = document.getElementById('transition-sfx');
+            if (transSfx) {
+                transSfx.volume = 0.4;
+                transSfx.play().catch(e => console.log("Audio blocked"));
+            }
+        }
+    }, "scene1+=0.3")
 
     // Move Camera Behind Curtains
     .to(camera.position, { x: 0, y: 0, z: -5, duration: 0.1 }, "scene1+=1.1") // Teleport
@@ -1205,7 +1216,7 @@ tl.to({}, { duration: 0.5 }, ">") // Pause
     }, "sceneTeaser")
 
     // 2. Reveal Teaser Text
-    .to("#gift-teaser .center-content", {
+    .to("#gift-teaser .teaser-glass-container", {
         opacity: 1,
         y: 0,
         duration: 1.0,
@@ -1216,7 +1227,7 @@ tl.to({}, { duration: 0.5 }, ">") // Pause
     .to({}, { duration: 1.5 })
 
     // 3. Hide Teaser Text
-    .to("#gift-teaser .center-content", {
+    .to("#gift-teaser .teaser-glass-container", {
         opacity: 0,
         y: -20,
         duration: 0.5
@@ -1593,12 +1604,38 @@ function startCelebration() {
     sprinklerActive = true;
     document.body.classList.add('celebration-active');
     if (sprinklerCanvas) sprinklerCanvas.style.display = 'block';
+
+    // Play Audio
+    const revealSfx = document.getElementById('reveal-sfx');
+    const holidayBgm = document.getElementById('holiday-bgm');
+
+    if (revealSfx) {
+        revealSfx.volume = 0.5;
+        revealSfx.play().catch(e => console.log("Audio blocked: click required"));
+    }
+    if (holidayBgm) {
+        holidayBgm.volume = 0.3;
+        holidayBgm.play().catch(e => console.log("Audio blocked: click required"));
+    }
+
     animateSprinklers();
 }
 
 function stopCelebration() {
     sprinklerActive = false;
     document.body.classList.remove('celebration-active');
+
+    // Fade out Music
+    const holidayBgm = document.getElementById('holiday-bgm');
+    if (holidayBgm) {
+        gsap.to(holidayBgm, {
+            volume: 0, duration: 1, onComplete: () => {
+                holidayBgm.pause();
+                holidayBgm.currentTime = 0;
+            }
+        });
+    }
+
     if (sprinklerCanvas) {
         gsap.to(sprinklerCanvas, {
             opacity: 0, duration: 0.5, onComplete: () => {

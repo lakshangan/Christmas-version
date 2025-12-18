@@ -559,17 +559,36 @@ footer {
 .gold-text-premium {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    background: linear-gradient(to right,
-            #bf953f,
-            #fcf6ba,
-            #b38728,
-            #fbf5b7,
-            #aa771c);
+    font-weight: 700;
+    background: linear-gradient(135deg,
+            #bf953f 0%,
+            #fcf6ba 25%,
+            #b38728 50%,
+            #fbf5b7 75%,
+            #aa771c 100%);
+    background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
     display: inline-block;
     padding-right: 0.1em;
+    filter: drop-shadow(0 0 10px rgba(191, 149, 63, 0.3));
+    animation: goldShimmer 8s linear infinite;
+    position: relative;
+}
+
+@keyframes goldShimmer {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .christmas-subtitle {
@@ -1192,6 +1211,8 @@ body.celebration-active .card-overlay {
     align-items: center;
     min-height: 400px;
     z-index: 10;
+    opacity: 0;
+    transform: translateY(30px);
 }
 
 .teaser-glass-container::before,
