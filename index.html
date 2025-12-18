@@ -53,7 +53,7 @@
           <h1 class="hero-main-title">The Fair <span class="gold-text-premium">AI</span></h1>
           <p class="christmas-subtitle">Celebrate the season with the future of fair AI. OpenLedger delivers trust,
             transparency, and joy this holiday.</p>
-          <a href="#mascot-showcase" class="premium-btn">Join The Event</a>
+          <a href="#mascot-showcase" class="premium-btn"> Open your gift</a>
         </div>
         <div class="highlight-spacer-col"></div>
       </div>
@@ -109,27 +109,32 @@
     <!-- New Teaser Section -->
     <section class="hero-section interactive-teaser" id="gift-teaser">
       <canvas id="teaser-canvas"></canvas>
-      <div class="center-content relative-content">
-        <h2 class="hero-lead-in cipher-text" data-value="INCOMING TRANSMISSION">INCOMING TRANSMISSION</h2>
+      <div class="center-content relative-content premium-teaser-box">
+        <div class="teaser-header">
+          <span class="status-dot"></span>
+          <span class="cipher-text" data-value="INCOMING TRANSMISSION">INCOMING TRANSMISSION</span>
+        </div>
         <h1 class="cinematic-title interactive-title">
           <span class="hover-word">SPECIAL</span> <br>
           <span class="gold-text hover-word">DELIVERY</span>
         </h1>
-        <p class="hero-subtitle fade-in-up">A package verified by the network is waiting for you.</p>
+        <p class="hero-subtitle fade-in-up" style="margin-top: 1rem;">A package verified by the network is waiting for
+          you.</p>
       </div>
     </section>
 
     <section class="gift-section" id="artifact-reveal">
+      <div class="card-overlay"></div>
+
       <div class="center-content" id="santa-instruction">
         <h2>Unwrap the Open Future</h2>
         <p style="max-width: 600px; margin: 1rem auto; line-height: 1.6;">"The ultimate gift to the AI ecosystem is
           ownership. OpenLedger is gifting the community a permissionless future where data contributors are rewarded
           and intelligence is no longer a secret. The box is open. The ledger is live."</p>
-        <button id="claim-stake-btn" class="premium-btn" style="margin-top: 1rem; opacity: 1;">CLAIM YOUR STAKE</button>
-        <p class="instruction-text">Tap the Gift to Open</p>
+        <button id="claim-stake-btn" class="premium-btn" style="margin-top: 1rem; opacity: 1;">Open your gift</button>
       </div>
 
-      <!-- 1. Username Modal (Initially Hidden) -->
+      <!-- 1. Username Modal (Restored) -->
       <div id="username-modal" class="glass-modal" style="display: none; opacity: 0;">
         <div class="modal-content">
           <h2 class="modal-title">Who is this gift for?</h2>
@@ -145,7 +150,7 @@
         </div>
       </div>
 
-      <!-- 2. Sharable Card (Animated Layout) -->
+      <!-- 2. Sharable Card (Restored Design & Content) -->
       <div id="santa-letter" class="sharable-card">
         <div class="card-content-wrapper">
           <h1 class="season-greeting">Merry Christmas</h1>

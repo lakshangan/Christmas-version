@@ -454,7 +454,7 @@ loader.load('/Gift Box.glb', (gltf) => {
         }
     });
 
-    giftModel.scale.set(2.5, 2.5, 2.5); // Make gift box much bigger
+    giftModel.scale.set(12.0, 12.0, 12.0); // Make gift box much bigger
     giftGroup.add(giftModel);
 }, undefined, (error) => {
     console.error("Error loading Gift Box:", error);
@@ -471,7 +471,8 @@ const internalLight = new THREE.PointLight(0xffd700, 0, 5);
 internalLight.position.set(0, 0, 0);
 giftGroup.add(internalLight);
 
-giftGroup.position.set(-15, 2.0, -5);
+giftGroup.position.set(-9, 0.5, 0);
+giftGroup.scale.set(0, 0, 0); // Start hidden
 scene.add(giftGroup);
 
 
@@ -754,22 +755,42 @@ function revealGiftSequence() {
                 // 5. Show Letter (Greeting Card Animated Entrance)
                 setTimeout(() => {
                     const letter = document.getElementById('santa-letter');
-                    if (letter) {
-                        letter.classList.add('active'); // Set display flex
+                    const overlay = document.querySelector('.card-overlay');
+
+                    if (letter && overlay) {
+                        overlay.style.display = 'block';
+                        letter.style.display = 'flex';
 
                         // Reset initial states for replay
-                        gsap.set(".season-greeting, .sender-info, .recipient-box, .santa-body, .card-footer-decor, .card-actions", { opacity: 0, y: 20, scale: 0.95 });
-                        gsap.set(letter, { scale: 0.8, opacity: 0 });
+                        gsap.set(".season-greeting, .sender-info, .recipient-box, .santa-body, .card-footer-decor, .card-actions", { opacity: 0, y: 15, scale: 0.98 });
+                        // Specific reset to ensure visibility and centering without nuking display:flex
+                        gsap.set(letter, {
+                            xPercent: 0,
+                            yPercent: 0,
+                            x: 0,
+                            y: 0,
+                            left: "auto",
+                            top: "auto",
+                            scale: 0.9,
+                            opacity: 0,
+                            position: "fixed",
+                            inset: "0",
+                            margin: "auto",
+                            display: "flex" // Reinforce display flex
+                        });
+                        gsap.set(overlay, { opacity: 0 });
 
                         const cardTl = gsap.timeline();
 
-                        // 1. Pop Card Container
-                        cardTl.to(letter, { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" })
+                        // 1. Fade in Overlay
+                        cardTl.to(overlay, { opacity: 1, duration: 0.5 })
+                            // 2. Pop Card Container
+                            .to(letter, { scale: 1, opacity: 1, duration: 0.6, ease: "back.out(1.2)" }, "-=0.2")
 
-                            // 2. Animate Text Elements Sequentially (Exact Layout Match)
+                            // 3. Animate Text Elements Sequentially
                             .to(".season-greeting", { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power2.out" })
-                            .to(".sender-info", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, "-=0.2") // "Christmas"
-                            .to(".recipient-box", { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, "-=0.2") // "Recip Name"
+                            .to(".sender-info", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, "-=0.2")
+                            .to(".recipient-box", { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, "-=0.2")
 
                             .to(".santa-body", { opacity: 1, y: 0, scale: 1, duration: 0.5 }, "-=0.2")
                             .to(".card-actions", { opacity: 1, y: 0, duration: 0.5 }, "-=0.1");
@@ -784,17 +805,27 @@ function revealGiftSequence() {
 function closeGift() {
     isGiftOpen = false;
 
-    // 1. Hide the Greeting Card
     const letter = document.getElementById('santa-letter');
+    const overlay = document.querySelector('.card-overlay');
+
     if (letter) {
         gsap.to(letter, {
             opacity: 0,
-            scale: 0.8,
-            duration: 0.5,
+            scale: 0.9,
+            duration: 0.4,
             ease: "power2.in",
             onComplete: () => {
-                letter.classList.remove('active');
-                letter.style.display = 'none'; // Ensure it's gone
+                letter.style.display = 'none';
+            }
+        });
+    }
+
+    if (overlay) {
+        gsap.to(overlay, {
+            opacity: 0,
+            duration: 0.4,
+            onComplete: () => {
+                overlay.style.display = 'none';
             }
         });
     }
@@ -811,12 +842,12 @@ function closeGift() {
     // Original Pos: x: -15, y: 2.0, z: -5
 
     // Scale up from 0 (Assemblage Effect)
-    gsap.to(giftModel.scale, { x: 3, y: 3, z: 3, duration: 0.8, ease: "back.out(1.2)", delay: 0.3 });
+    gsap.to(giftModel.scale, { x: 12.0, y: 12.0, z: 12.0, duration: 0.8, ease: "back.out(1.2)", delay: 0.3 });
 
     gsap.to(giftGroup.position, {
-        x: -15,
-        y: 2.0,
-        z: -5,
+        x: -9,
+        y: 0.5,
+        z: 0,
         duration: 1.5,
         ease: "power2.inOut"
     });
@@ -836,8 +867,7 @@ function closeGift() {
         ease: "power2.inOut"
     });
 
-    // 5. Restore UI (Instructions & Claims)
-    // 5. Restore UI (Instructions & Claims)
+    /* 5. Restore UI (Instructions & Claims) */
     setTimeout(() => {
         // Restore the main container's interactivity first
         gsap.to("#artifact-reveal .center-content", { opacity: 1, duration: 0.5, pointerEvents: "all" });
@@ -846,11 +876,13 @@ function closeGift() {
         const claimBtn = document.getElementById('claim-stake-btn');
         const nav = document.querySelector('nav');
 
+        // Show instruction block
         if (instruction) {
             instruction.style.display = 'block';
             gsap.to(instruction, { opacity: 1, duration: 0.5 });
         }
 
+        // Explicitly show button again
         if (claimBtn) {
             claimBtn.style.display = 'inline-block';
             gsap.to(claimBtn, { opacity: 1, duration: 0.5 });
@@ -859,17 +891,17 @@ function closeGift() {
         // Show Nav Bar
         if (nav) gsap.to(nav, { opacity: 1, duration: 0.5 });
 
-        // Reset Modal State just in case
-        const modal = document.getElementById('username-modal');
-        if (modal) {
-            modal.style.display = 'none';
-            modal.style.opacity = '0';
+        // Ensure Asset Display is hidden
+        const assetDisplay = document.getElementById('verified-asset-display');
+        if (assetDisplay) {
+            assetDisplay.style.display = 'none';
+            assetDisplay.style.opacity = '0';
         }
 
     }, 1000);
 }
 
-// Ensure close button is wired up
+// Ensure close button is wired up for Greeting Card
 const finalCloseBtn = document.getElementById('close-letter');
 if (finalCloseBtn) {
     finalCloseBtn.onclick = (e) => {
@@ -877,6 +909,7 @@ if (finalCloseBtn) {
         closeGift();
     };
 }
+
 
 
 // Event Listeners for Modal
@@ -1206,6 +1239,9 @@ tl.to(camera.position, {
         duration: 1.5,
         ease: "power2.inOut"
     }, "scene3")
+
+    // Reveal Gift Box
+    .to(giftGroup.scale, { x: 1, y: 1, z: 1, duration: 1.0 }, "scene3")
 
     // Reveal Gift Content - Staggered (ON THE RIGHT)
     .to("#artifact-reveal .center-content h2, #artifact-reveal .center-content p, #artifact-reveal .center-content button, #artifact-reveal .instruction-text", {

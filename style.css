@@ -438,7 +438,7 @@ footer {
 /* Gift Reveal - Split Layout (Text Right) */
 #artifact-reveal .center-content {
     position: absolute;
-    left: 65%;
+    left: 70%;
     /* Move to right side */
     top: 50%;
     /* Center vertically */
@@ -636,165 +636,171 @@ footer {
 
 
 
-/* Santa Letter Styles */
-.santa-card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.8);
-    width: 90%;
-    max-width: 500px;
-    background: #fff;
-    /* Paper white */
-    color: #333;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
-    /* Gold glow */
-    text-align: center;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 30;
-    font-family: 'Playfair Display', serif;
-    /* Classic font */
-    border: 5px solid #8a0000;
-    /* Red Border */
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.santa-card.active {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-    pointer-events: auto;
-}
-
-.santa-header h3 {
-    color: #8a0000;
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.santa-icon {
-    font-size: 3rem;
-    margin-right: 10px;
-    vertical-align: middle;
-}
-
-.santa-body {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    margin-bottom: 2rem;
-    font-style: italic;
-}
-
-#close-letter {
-    background: #004d00;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: background 0.3s;
-}
-
-#close-letter:hover {
-    background: #006600;
-}
-
-.instruction-text {
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    opacity: 0.7;
-    margin-top: 1rem;
-    animation: pulseText 2s infinite;
-}
-
-@keyframes pulseText {
-
-    0%,
-    100% {
-        opacity: 0.4;
-    }
-
-    50% {
-        opacity: 1;
-    }
-}
-
-.mascot-glow-bg {
-    position: absolute;
-    top: 50%;
-    right: 5%;
-    transform: translateY(-50%);
-    width: 50vw;
-    height: 50vw;
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 60%);
-    z-index: 1;
-    filter: blur(80px);
-    pointer-events: none;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px) rotate(-2deg);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
-    }
-}
-
-@keyframes glowPulse {
-    from {
-        opacity: 0.4;
-        transform: translate(-50%, -50%) scale(0.9);
-    }
-
-    to {
-        opacity: 0.7;
-        transform: translate(-50%, -50%) scale(1.1);
-    }
-}
-
-/* Vision Section (Text Loop) */
-
-/* Glass Modal & Input */
-.glass-modal {
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
+/* --- NEW PREMIUM TEASER & ASSET DISPLAY --- */
+.premium-teaser-box {
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
     backdrop-filter: blur(10px);
+    padding: 3rem 4rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-teaser-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    opacity: 0.5;
+}
+
+.teaser-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10000;
-    /* Extremely high */
-    opacity: 0;
-    transition: opacity 0.5s ease;
+    margin-bottom: 2rem;
+    gap: 10px;
 }
 
-.modal-content {
-    background: #111;
-    padding: 3rem;
-    border-radius: 20px;
-    border: 1px solid var(--color-gold);
-    width: 90%;
-    max-width: 500px;
-    text-align: center;
-    box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #00ff88;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ff88;
+    animation: blink 2s infinite;
 }
 
+.cipher-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+/* Glass Panel (Asset Display) */
+.glass-panel {
+    position: absolute;
+    top: 50%;
+    left: 70%;
+    /* Matches JS reveal position */
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: rgba(10, 20, 30, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 2px solid var(--color-gold);
+    backdrop-filter: blur(20px);
+    padding: 0;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.status-indicator.active {
+    width: 6px;
+    height: 6px;
+    background: var(--color-gold);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--color-gold);
+}
+
+.status-text {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.panel-body {
+    padding: 2rem;
+}
+
+.asset-title {
+    font-size: 1.8rem;
+    color: white;
+    margin-bottom: 1rem;
+    font-weight: 400;
+}
+
+.asset-desc {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+}
+
+.asset-meta {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 4px;
+}
+
+.meta-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.meta-row:last-child {
+    margin-bottom: 0;
+}
+
+.meta-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.1em;
+}
+
+.meta-value {
+    font-size: 0.9rem;
+    color: white;
+    font-family: 'Courier New', monospace;
+    /* Tech feel */
+    letter-spacing: 0.05em;
+}
+
+.success-text {
+    color: #4cca89;
+    text-shadow: 0 0 10px rgba(76, 202, 137, 0.3);
+}
+
+.panel-footer {
+    padding: 1rem;
+    text-align: right;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.small-btn {
+    padding: 0.5rem 1.5rem;
+    font-size: 0.8rem;
+}
+
+/* Correction for previous edit */
 .modal-title {
     font-family: 'Playfair Display', serif;
     font-size: 2.2rem;
@@ -880,31 +886,55 @@ footer {
 /* --- EXACT FLYER DESIGN UI --- */
 /* --- EXACT FLYER DESIGN UI (Premium Polish) --- */
 .sharable-card {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    width: 600px;
-    /* Slightly wider for better proportions */
-    height: 800px;
+    position: fixed;
+    inset: 0;
+    margin: auto;
+
+    /* Strict sizing to match greeting card aspect ratio */
+    height: min(800px, 85vh);
+    width: auto;
+    aspect-ratio: 3/4;
+
     background: #fff;
     border: none;
     padding: 0;
     box-shadow:
-        0 40px 100px -20px rgba(0, 0, 0, 0.7),
+        0 40px 100px -20px rgba(0, 0, 0, 0.8),
         0 0 0 1px rgba(255, 255, 255, 0.1);
-    /* Subtle rim */
     display: none;
-    z-index: 201;
+    z-index: 10005;
     overflow: hidden;
     border-radius: 20px;
 }
 
-/* The Background Image acts as the main design container */
+/* On very narrow screens, satisfy width first */
+@media (max-aspect-ratio: 3/4) {
+    .sharable-card {
+        width: 90vw;
+        height: auto;
+        max-height: 85vh;
+        /* Safety cap */
+    }
+}
+
+/* Background Overlay for focus */
+.card-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
+    opacity: 0;
+}
+
 .card-content-wrapper {
     width: 100%;
     height: 100%;
-    background-image: url('/exact-card-bg.png');
+    background-image: url('/greeting.png');
     background-size: cover;
     background-position: center;
     position: relative;
@@ -912,8 +942,8 @@ footer {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    /* Reduced Top Padding to pull text up into the safe zone */
-    padding: 210px 40px 0 40px;
+    /* Adjusted padding to center text within greeting.png frame */
+    padding: 120px 40px 100px 40px;
 }
 
 /* 1. Greeting - Subtle Elegant Script */
@@ -1004,14 +1034,14 @@ footer {
 /* Actions */
 .card-actions {
     position: absolute;
-    bottom: 140px;
-    /* Move buttons UP, above the snowman */
+    bottom: 30px;
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 0.8rem;
+    gap: 15px;
     opacity: 0;
-    z-index: 10;
+    z-index: 20;
+    padding: 0;
 }
 
 .action-btn {
@@ -1020,8 +1050,36 @@ footer {
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+.action-btn.download {
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+}
+
+.action-btn.download:hover {
+    background: #34495e;
+    transform: translateY(-2px);
+}
+
+.action-btn.close {
+    background: #fff;
+    border: 1px solid #c41e3a;
+    color: #c41e3a;
+}
+
+.action-btn.close:hover {
+    background: #fff0f0;
+    transform: translateY(-2px);
+}
+
+
 
 .action-btn.download {
     background: #2c3e50;
