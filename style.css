@@ -953,6 +953,8 @@ body.celebration-active .card-overlay {
 .card-content-wrapper {
     width: 100%;
     height: 100%;
+    background-color: #ffffff;
+    /* Solid white fallback */
     background-image: url('/greeting.png');
     background-size: cover;
     background-position: center;
@@ -1042,12 +1044,13 @@ body.celebration-active .card-overlay {
     font-weight: 400;
     text-align: center;
     opacity: 0;
-    /* Soft, paper-like backing */
-    background: rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(4px);
+    /* Fully solid paper-like backing to hide background particles */
+    background: #ffffff;
+    backdrop-filter: none;
+    /* No blur needed if solid */
     padding: 20px 25px;
     border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 /* Hide Footer Decor */
@@ -1179,77 +1182,314 @@ body.celebration-active .card-overlay {
     /* backdrop-filter: blur(2px); Maybe too heavy? Let's keep it clean */
 }
 
-/* Tech Pill Badge for "Incoming Transmission" */
-.cipher-text {
+/* --- NEW GLASS TEASER CARD STYLES --- */
+.teaser-glass-container {
+    color: white;
+    position: relative;
     font-family: 'Outfit', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--color-gold-light);
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-
-    /* Glass Pill Style */
-    display: inline-block;
-    padding: 0.8rem 2rem;
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    border-radius: 50px;
-    background: rgba(212, 175, 55, 0.05);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
-    backdrop-filter: blur(5px);
-
-    margin-bottom: 3rem;
-    cursor: crosshair;
-    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    z-index: 10;
 }
 
-.cipher-text:hover {
-    background: rgba(212, 175, 55, 0.15);
-    border-color: var(--color-gold);
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+.teaser-glass-container::before,
+.teaser-glass-container::after {
+    content: "";
+    background-color: #fab5704c;
+    position: absolute;
+    pointer-events: none;
 }
 
-/* Main Title Refinement */
-.interactive-title {
-    font-size: clamp(4rem, 10vw, 7rem);
-    line-height: 0.9;
-    perspective: 1000px;
+.teaser-glass-container::before {
+    border-radius: 50%;
+    width: 12rem;
+    height: 12rem;
+    top: 15%;
+    right: 30%;
+    filter: blur(60px);
+    z-index: -1;
+}
+
+
+
+/* --- ADVANCED HOLOGRAPHIC TEASER CARD --- */
+.teaser-glass-box.holographic {
+    width: min(540px, 95vw);
+    height: auto;
+    min-height: 340px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    /* Frozen Glass Effect */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%);
+    backdrop-filter: blur(30px) saturate(160%);
+    -webkit-backdrop-filter: blur(30px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1.5rem;
+    box-shadow:
+        0 30px 60px rgba(0, 0, 0, 0.6),
+        inset 0 0 40px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* 1. Scanning Animation */
+.scanning-bar {
+    position: absolute;
+    top: -10%;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(to bottom, transparent, rgba(212, 175, 55, 0.1), transparent);
+    animation: scanMove 3s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes scanMove {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(350px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* 2. Tech Corners */
+.card-tech-corners span {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-color: rgba(212, 175, 55, 0.4);
+    border-style: solid;
+}
+
+.card-tech-corners span:nth-child(1) {
+    top: 15px;
+    left: 15px;
+    border-width: 2px 0 0 2px;
+}
+
+.card-tech-corners span:nth-child(2) {
+    top: 15px;
+    right: 15px;
+    border-width: 2px 2px 0 0;
+}
+
+.card-tech-corners span:nth-child(3) {
+    bottom: 15px;
+    left: 15px;
+    border-width: 0 0 2px 2px;
+}
+
+.card-tech-corners span:nth-child(4) {
+    bottom: 15px;
+    right: 15px;
+    border-width: 0 2px 2px 0;
+}
+
+/* 3. Header Styling */
+.teaser-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
+    z-index: 2;
 }
 
-.hover-word {
+.payload-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pulse-dot {
+    width: 6px;
+    height: 6px;
+    background: #ffd700;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ffd700;
+    animation: dotPulse 1.5s infinite;
+}
+
+@keyframes dotPulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.payload-badge .label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.load-index {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--color-gold);
+}
+
+.teaser-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    line-height: 1.2;
+    margin: 1.5rem 0;
+    color: #fff;
+    z-index: 2;
+}
+
+.shimmer-gold {
     display: inline-block;
-    transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1), opacity 0.4s ease;
-    cursor: pointer;
-    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    /* Depth shadow */
-}
-
-/* Gradient Text for "Delivery" */
-.gold-text.hover-word {
-    background: linear-gradient(135deg, #d4af37 0%, #fff 50%, #aa771c 100%);
+    background: linear-gradient(to right, #d4af37, #fff, #d4af37);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: shineSlow 8s linear infinite;
+    animation: shimmerGold 5s linear infinite;
+    font-weight: 700;
+    margin-right: 0.3rem;
 }
 
-@keyframes shineSlow {
+@keyframes shimmerGold {
     to {
         background-position: 200% center;
     }
 }
 
-.hover-word:hover {
-    transform: scale(1.05) translateZ(30px);
-    text-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+/* 5. Data Rows */
+.teaser-details {
+    margin-bottom: 1.5rem;
+    z-index: 2;
 }
 
-.fade-in-up {
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.row-label {
     font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+    letter-spacing: 1px;
+}
+
+.row-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    color: #fff;
+    letter-spacing: 0.5px;
+}
+
+.accent-text {
+    color: var(--color-gold);
+    font-weight: 600;
+}
+
+/* 6. Footer & Barcode */
+.teaser-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 2;
+}
+
+.barcode-decor {
+    display: flex;
+    gap: 2px;
+    opacity: 0.3;
+}
+
+.barcode-decor span {
+    width: 2px;
+    height: 12px;
+    background: #fff;
+}
+
+.barcode-decor span:nth-child(even) {
+    width: 4px;
+}
+
+.meta-info {
+    text-align: right;
+}
+
+.meta-info .label {
+    display: block;
+    font-size: 0.6rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 2px;
+}
+
+.meta-info .value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+/* Handled above by .teaser-glass-box.holographic */
+
+.teaser-details strong {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    color: var(--color-gold);
+}
+
+.teaser-details p {
+    margin: 0;
+    font-size: 1rem;
     font-weight: 300;
     letter-spacing: 0.05em;
-    color: rgba(255, 255, 255, 0.7);
-    max-width: 600px;
-    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1.5rem;
+}
+
+.teaser-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.teaser-meta span:first-child {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.teaser-meta span:last-child {
+    color: #fff;
+    font-weight: 600;
 }

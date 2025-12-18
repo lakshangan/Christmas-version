@@ -1372,47 +1372,10 @@ if (nav) {
 
 // --- Interactive Teaser Logic ---
 const teaserSection = document.querySelector('.interactive-teaser');
-const cipherText = document.querySelector('.cipher-text');
+const teaserCard = document.querySelector('.teaser-glass-box');
 
-if (teaserSection && cipherText) {
-    const originalText = cipherText.dataset.value;
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*"; // Cyber characters
-    let interval = null;
-
-    // Cipher Animation Function
-    const runCipher = () => {
-        let iterations = 0;
-        clearInterval(interval);
-        interval = setInterval(() => {
-            cipherText.innerText = originalText
-                .split("")
-                .map((letter, index) => {
-                    if (index < iterations) return originalText[index];
-                    return chars[Math.floor(Math.random() * chars.length)];
-                })
-                .join("");
-
-            if (iterations >= originalText.length) {
-                clearInterval(interval);
-            }
-            iterations += 1 / 2; // Control speed
-        }, 30);
-    };
-
-    // Run once on load/reveal (managed by ScrollTrigger if possible, but intersection observer is easier here)
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                runCipher();
-            }
-        });
-    }, { threshold: 0.5 });
-    observer.observe(teaserSection);
-
-    // Run on hover
-    teaserSection.addEventListener('mouseenter', runCipher);
-
-    // Mouse Tracking for Parallax
+if (teaserSection && teaserCard) {
+    // Mouse Tracking for Parallax & Tilt
     teaserSection.addEventListener('mousemove', (e) => {
         const rect = teaserSection.getBoundingClientRect();
         const x = e.clientX - rect.left;
@@ -1421,37 +1384,34 @@ if (teaserSection && cipherText) {
         const xNorm = (x / rect.width) * 2 - 1;
         const yNorm = (y / rect.height) * 2 - 1;
 
-        const content = teaserSection.querySelector('.relative-content');
-        if (content) {
-            gsap.to(content, {
-                x: xNorm * 30, // 30px movement range
-                y: yNorm * 30,
-                duration: 0.8,
-                ease: "power2.out"
-            });
-        }
+        // Parallax for the card
+        gsap.to(teaserCard, {
+            x: xNorm * 20,
+            y: yNorm * 20,
+            rotationX: -yNorm * 8,
+            rotationY: xNorm * 8,
+            duration: 0.8,
+            ease: "power2.out"
+        });
 
-        // Tilt Effect on Title
-        const title = teaserSection.querySelector('.interactive-title');
+        // Inverse parallax for the title inside for depth
+        const title = teaserCard.querySelector('.teaser-title');
         if (title) {
             gsap.to(title, {
-                rotationX: -yNorm * 5, // 5 degree tilt
-                rotationY: xNorm * 5,
-                duration: 0.5,
-                ease: "power1.out"
+                x: -xNorm * 10,
+                y: -yNorm * 10,
+                duration: 0.8,
+                ease: "power2.out"
             });
         }
     });
 
     // Reset on leave
     teaserSection.addEventListener('mouseleave', () => {
-        const content = teaserSection.querySelector('.relative-content');
-        const title = teaserSection.querySelector('.interactive-title');
-        if (content) {
-            gsap.to(content, { x: 0, y: 0, duration: 0.8 });
-        }
+        gsap.to(teaserCard, { x: 0, y: 0, rotationX: 0, rotationY: 0, duration: 1.2, ease: "elastic.out(1, 0.5)" });
+        const title = teaserCard.querySelector('.teaser-title');
         if (title) {
-            gsap.to(title, { rotationX: 0, rotationY: 0, duration: 0.8 });
+            gsap.to(title, { x: 0, y: 0, duration: 1.2, ease: "elastic.out(1, 0.5)" });
         }
     });
 }
