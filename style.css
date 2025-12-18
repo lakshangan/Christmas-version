@@ -950,11 +950,10 @@ footer {
 .season-greeting {
     font-family: 'Great Vibes', cursive;
     font-size: 3rem;
-    /* Reduced from 3.5rem */
     color: #8c734b;
-    /* Antique Gold */
     line-height: 1.1;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.1rem;
+    /* Tightened */
     text-shadow: 0 2px 0px rgba(255, 255, 255, 0.8);
     transform: rotate(-2deg);
     opacity: 0;
@@ -964,12 +963,12 @@ footer {
 .sender-info {
     font-family: 'Playfair Display', serif;
     font-weight: 700;
-    font-size: 2.5rem;
-    /* Reduced from 3rem */
+    font-size: 2.2rem;
+    /* Slightly smaller for space */
     color: #1a1a1a;
-    /* Soft Black */
     line-height: 1;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+    /* Tightened from 1.5rem */
     letter-spacing: -0.02em;
     text-transform: uppercase;
     opacity: 0;
@@ -977,7 +976,8 @@ footer {
 
 /* 3. Recipient Name */
 .recipient-box {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+    /* Tightened from 1.5rem */
     text-align: center;
     width: 100%;
     opacity: 0;
@@ -1011,19 +1011,24 @@ footer {
 /* 4. Body Text */
 .santa-body {
     font-family: 'Outfit', sans-serif;
-    font-size: 0.95rem;
-    color: #444;
-    line-height: 1.5;
-    max-width: 75%;
+    font-size: 1.05rem;
+    /* Slightly larger for warmth */
+    color: #333;
+    /* Darker for better contrast on cream */
+    line-height: 1.6;
+    /* More breathing room */
+    max-width: 85%;
+    /* Use more width for longer messages */
     margin: 0 auto;
-    font-weight: 500;
+    font-weight: 400;
+    text-align: center;
     opacity: 0;
-    /* Ensure text doesn't hit snowman */
-    background: rgba(255, 250, 240, 0.6);
-    /* Subtle backing if needed */
-    backdrop-filter: blur(2px);
-    padding: 10px;
-    border-radius: 10px;
+    /* Soft, paper-like backing */
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(4px);
+    padding: 20px 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
 /* Hide Footer Decor */
@@ -1058,49 +1063,36 @@ footer {
 }
 
 .action-btn.download {
-    background: #2c3e50;
+    background: #2b3a4a;
+    /* Deep signature blue */
     color: #fff;
     border: none;
+    padding: 10px 22px;
 }
 
 .action-btn.download:hover {
-    background: #34495e;
+    background: #1e2833;
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
 .action-btn.close {
-    background: #fff;
-    border: 1px solid #c41e3a;
-    color: #c41e3a;
-}
-
-.action-btn.close:hover {
-    background: #fff0f0;
-    transform: translateY(-2px);
-}
-
-
-
-.action-btn.download {
-    background: #2c3e50;
+    background: #e63946;
+    /* Vibrant Red from the image */
     color: #fff;
     border: none;
-}
-
-.action-btn.download:hover {
-    background: #34495e;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.action-btn.close {
-    background: transparent;
-    border: 1px solid #c41e3a;
-    color: #c41e3a;
+    padding: 10px 25px;
 }
 
 .action-btn.close:hover {
-    background: #fff0f0;
+    background: #d62828;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(230, 57, 70, 0.3);
 }
+
+
+
+
 
 .sharable-card.active {
     display: flex;

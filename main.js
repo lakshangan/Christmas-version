@@ -678,23 +678,23 @@ function revealGiftSequence() {
 
     // 0. Update Card Text for Poster Layout
     const messageBody = document.querySelector('.santa-body');
-    // Intern Santa Specific Message (Extended Pool)
+    // Intern Santa Specific Message (Warm, 3-line average)
     const internMessages = [
-        `"Sending you verified blocks of joy, ${userName}! May your latency be low and your spirits high."`,
-        `"I've double-checked the ledger, ${userName}, and you're definitely on the Nice List. Happy Holidays!"`,
-        `"This gift is immutable, just like our holiday spirit. Have a wonderful decentralized celebration, ${userName}!"`,
-        `"Deployed with love from the North Pole (Node 1) to ${userName}. Enjoy your ownership!"`,
-        `"Ho Ho Ho! ${userName}, I've encrypted some extra luck into this gift card. Use it wisely!"`,
-        `"Even the blockchain can't track how much joy I wish for you, ${userName}. Verified by Intern Santa."`,
-        `"Warning: This gift contains high levels of holiday cheer. Handle with care, ${userName}!"`,
-        `"No gas fees attached to this wish, ${userName}. Just pure, unlimited festive vibes."`,
-        `"Scalable joy for a scalable future. Wishing you the best holidays, ${userName}!"`,
-        `"Mining happiness block by block. You’ve earned this reward, ${userName}!"`,
-        `"Smart Contract executed: Deliver infinite joy to ${userName}. status: SUCCESS."`,
-        `"From our nodes to yours, ${userName}, wishing you a network full of love and light."`,
-        `"Zero-knowledge proof that you are awesome, ${userName}. Believe it!"`,
-        `"Santa's sleigh is powered by good vibes this year, and you're the fuel, ${userName}!"`,
-        `"Wrap yourself in the warmth of the season, ${userName}. The best is yet to come."`
+        `"Wishing you a very well and beautiful Christmas, ${userName}. We hope you enjoy this magical day with your family and loved ones, creating memories that last forever. May the coming New Year bring you endless joy and success."`,
+        `"Merry Christmas to you and your family, ${userName}! May your home be filled with laughter, your heart with love, and your life with the warmth of the holiday season. We can't wait to see what amazing things we'll achieve together in 2026."`,
+        `"Sending you our warmest wishes this holiday season, ${userName}. May the peace and joy of Christmas stay with you throughout the New Year. Thank you for being such an incredible part of our journey—here's to a bright year ahead!"`,
+        `"To our wonderful ${userName}, we wish you a Christmas filled with wonder and a New Year overflowing with possibility. Take this time to cherish those closest to you and recharge for a spectacular year. You deserve the very best this season!"`,
+        `"Happy Holidays, ${userName}! May your Christmas be as bright as the northern star and your New Year as promising as a fresh snowfall. We hope you have a relaxing time with family, filled with good food and even better company."`,
+        `"Warmest thoughts and best wishes for a wonderful Christmas, ${userName}. May you find joy in the little things and peace in the quiet moments with family. Here's to a healthy, happy, and prosperous 2026 for all of us."`,
+        `"Merry Christmas, ${userName}! We hope your day is wrapped in joy and tied with love. May the magic of the holidays bring a smile to your face and the spirit of the New Year bring new adventures to your doorstep."`,
+        `"Wishing you a season of blessings and a year of happiness, ${userName}. May your Christmas dinner be long and your worries be short. We're so grateful to have you in our network and wish you a truly beautiful holiday break."`,
+        `"To ${userName}: May the melody and spirit of the holidays fill your home with love and peace. We wish you a beautiful Christmas celebration with your family and a New Year that surpasses all your expectations. Happy days ahead!"`,
+        `"A very Merry Christmas to you, ${userName}! May the holiday spirit ignite a spark of joy in your heart that lasts throughout 2026. Enjoy every moment with your family and may your New Year be as immutable and solid as our ledger of truth."`,
+        `"Sending festive cheers your way, ${userName}! We hope your Christmas is full of warmth and your New Year is paved with success and new discoveries. Enjoy the festive treats and the company of those who matter most."`,
+        `"Wishing you a Christmas that is merry and bright, and a New Year that is full of light, ${userName}. May you be surrounded by family and friends, sharing in the true spirit of the season. We appreciate everything you do!"`,
+        `"Merry Christmas and a brilliant New Year, ${userName}! We hope you find time to slow down and enjoy the beauty of the season with your family. May your path in the coming year be clear and filled with wonderful surprises."`,
+        `"Warmest holiday greetings to you, ${userName}. May your Christmas be filled with the songs of angels and the laughter of children. We wish you a peaceful transition into the New Year and look forward to building a great future together."`,
+        `"To our dear ${userName}, wishing you a Christmas full of grace and a New Year full of energy. May your holiday season be a time of rest, reflection, and immense happiness with your loved ones. Cheers to a beautiful holiday!"`
     ];
     const randomMsg = internMessages[Math.floor(Math.random() * internMessages.length)];
 
@@ -769,8 +769,6 @@ function revealGiftSequence() {
                             yPercent: 0,
                             x: 0,
                             y: 0,
-                            left: "auto",
-                            top: "auto",
                             scale: 0.9,
                             opacity: 0,
                             position: "fixed",
