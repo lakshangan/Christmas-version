@@ -107,15 +107,15 @@
     </section>
 
     <!-- New Teaser Section -->
-    <section class="hero-section" id="gift-teaser"
-      style="display: flex; align-items: center; justify-content: center; text-align: center; pointer-events: none;">
-      <div class="center-content">
-        <h2 class="hero-lead-in"
-          style="font-size: 1.5rem; color: var(--color-gold); letter-spacing: 0.5em; margin-bottom: 2rem;">INCOMING
-          TRANSMISSION</h2>
-        <h1 class="cinematic-title" style="font-size: 5rem; line-height: 1;">SPECIAL <br> <span
-            class="gold-text">DELIVERY</span></h1>
-        <p class="hero-subtitle" style="margin-top: 2rem;">A package verified by the network is waiting for you.</p>
+    <section class="hero-section interactive-teaser" id="gift-teaser">
+      <canvas id="teaser-canvas"></canvas>
+      <div class="center-content relative-content">
+        <h2 class="hero-lead-in cipher-text" data-value="INCOMING TRANSMISSION">INCOMING TRANSMISSION</h2>
+        <h1 class="cinematic-title interactive-title">
+          <span class="hover-word">SPECIAL</span> <br>
+          <span class="gold-text hover-word">DELIVERY</span>
+        </h1>
+        <p class="hero-subtitle fade-in-up">A package verified by the network is waiting for you.</p>
       </div>
     </section>
 
@@ -130,10 +130,19 @@
       </div>
 
       <!-- 1. Username Modal (Initially Hidden) -->
-      <div id="username-modal" class="center-content glass-modal" style="display: none; opacity: 0; z-index: 20;">
-        <h2 style="font-size: 2rem; margin-bottom: 1rem;">Who is this gift for?</h2>
-        <input type="text" id="username-input" placeholder="Enter your name" autocomplete="off">
-        <button id="submit-name-btn" class="premium-btn" style="margin-top: 1.5rem;">REVEAL MY GIFT</button>
+      <div id="username-modal" class="glass-modal" style="display: none; opacity: 0;">
+        <div class="modal-content">
+          <h2 class="modal-title">Who is this gift for?</h2>
+          <p class="modal-subtitle">Enter your Full Name or Twitter ID below.</p>
+
+          <div class="input-wrapper">
+            <label for="username-input" class="input-label">RECIPIENT NAME</label>
+            <input type="text" id="username-input" placeholder="e.g. Elon or @handle" autocomplete="off" maxlength="25">
+          </div>
+
+          <button id="submit-name-btn" class="reveal-btn">REVEAL MY GIFT</button>
+          <button id="close-modal-btn" class="modal-cancel">Maybe later</button>
+        </div>
       </div>
 
       <!-- 2. Sharable Card (Animated Layout) -->

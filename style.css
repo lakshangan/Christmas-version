@@ -611,15 +611,30 @@ footer {
     backdrop-filter: blur(10px);
     opacity: 0;
     /* JS will reveal */
+    animation: btnGlow 3s infinite alternate;
+}
+
+@keyframes btnGlow {
+    from {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    to {
+        box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+        border-color: rgba(212, 175, 55, 0.8);
+    }
 }
 
 .premium-btn:hover {
     background: #fff;
     color: #000;
     border-color: #fff;
-    box-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
     transform: translateY(-2px);
 }
+
+
 
 /* Santa Letter Styles */
 .santa-card {
@@ -753,54 +768,136 @@ footer {
 
 /* Glass Modal & Input */
 .glass-modal {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
     background: rgba(0, 0, 0, 0.85);
-    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    /* Extremely high */
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.modal-content {
+    background: #111;
     padding: 3rem;
+    border-radius: 20px;
     border: 1px solid var(--color-gold);
-    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
-    z-index: 200;
-    /* Force on top */
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(212, 175, 55, 0.3);
+}
+
+.modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.modal-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2.5rem;
+    font-size: 1rem;
+}
+
+.input-wrapper {
+    margin-bottom: 2.5rem;
+    text-align: left;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    color: var(--color-gold);
+    margin-bottom: 0.8rem;
+    font-weight: 700;
 }
 
 #username-input {
     width: 100%;
-    padding: 1rem;
-    background: transparent;
-    border: none;
-    border-bottom: 2px solid #555;
-    color: #fff;
+    padding: 1.2rem;
+    background: #ffffff !important;
+    /* Force white background */
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    color: #000 !important;
+    /* Force black text */
+    font-size: 1.2rem;
     font-family: 'Outfit', sans-serif;
-    font-size: 1.5rem;
-    text-align: center;
     outline: none;
     transition: border-color 0.3s;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 #username-input:focus {
-    border-bottom-color: var(--color-gold);
+    border-color: var(--color-gold);
+}
+
+.reveal-btn {
+    width: 100%;
+    padding: 1.2rem;
+    background: var(--color-gold);
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+}
+
+.reveal-btn:hover {
+    background: #fff;
+    transform: scale(1.02);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+}
+
+.modal-cancel {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+.modal-cancel:hover {
+    color: #fff;
 }
 
 /* --- EXACT FLYER DESIGN UI --- */
+/* --- EXACT FLYER DESIGN UI (Premium Polish) --- */
 .sharable-card {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) scale(0.9);
-    width: 550px;
-    height: 750px;
-    /* Exact Vertical Ratio */
-    background: transparent;
+    width: 600px;
+    /* Slightly wider for better proportions */
+    height: 800px;
+    background: #fff;
     border: none;
     padding: 0;
-    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+    box-shadow:
+        0 40px 100px -20px rgba(0, 0, 0, 0.7),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    /* Subtle rim */
     display: none;
     z-index: 201;
     overflow: hidden;
-    border-radius: 4px;
+    border-radius: 20px;
 }
 
 /* The Background Image acts as the main design container */
@@ -815,99 +912,109 @@ footer {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding-top: 240px;
-    /* Push content down below top bells/wreath */
+    /* Reduced Top Padding to pull text up into the safe zone */
+    padding: 210px 40px 0 40px;
 }
 
-/* 1. "Merry" - Dark Green Script */
+/* 1. Greeting - Subtle Elegant Script */
 .season-greeting {
     font-family: 'Great Vibes', cursive;
-    font-size: 4rem;
-    color: #2e4a28;
-    /* Dark Green from image */
-    line-height: 1;
-    margin-bottom: 0;
-    text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
-    transform: rotate(-5deg);
-    /* Slight tilt like image */
+    font-size: 3rem;
+    /* Reduced from 3.5rem */
+    color: #8c734b;
+    /* Antique Gold */
+    line-height: 1.1;
+    margin-bottom: 0.2rem;
+    text-shadow: 0 2px 0px rgba(255, 255, 255, 0.8);
+    transform: rotate(-2deg);
     opacity: 0;
-    /* JS Animates */
 }
 
-/* 2. "Christmas" - Big Red Bold */
+/* 2. Sender/Title - Clean Serif */
 .sender-info {
     font-family: 'Playfair Display', serif;
     font-weight: 700;
-    font-size: 4.5rem;
-    /* Huge */
-    color: #d32f2f;
-    /* Bright Red */
-    line-height: 0.9;
-    margin-bottom: 0.5rem;
-    letter-spacing: -2px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-    text-transform: capitalize;
-    /* Ensure Sentence case */
+    font-size: 2.5rem;
+    /* Reduced from 3rem */
+    color: #1a1a1a;
+    /* Soft Black */
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
     opacity: 0;
 }
 
-/* 3. "Party" -> Replaced with "To [Name]" Script */
+/* 3. Recipient Name */
 .recipient-box {
     margin-bottom: 1.5rem;
     text-align: center;
-    transform: scale(0.9);
+    width: 100%;
     opacity: 0;
 }
 
 .to-label {
-    display: none;
-    /* Hide 'To' label for cleaner look */
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #888;
+    margin-bottom: 0.2rem;
+    display: block;
 }
 
 .recipient-name {
-    font-family: 'Great Vibes', cursive;
-    font-size: 3rem;
-    color: #3e2723;
-    /* Dark Brown */
-    border: none;
-    display: block;
-    margin-top: -10px;
-}
-
-/* 4. Details Section (Fake details matching image layout) */
-.santa-body {
     font-family: 'Playfair Display', serif;
-    font-size: 0.9rem;
-    color: #555;
-    line-height: 1.8;
-    max-width: 70%;
-    margin: 0 auto;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    opacity: 0;
+    font-style: italic;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    /* Responsive sizing */
+    color: #b30000;
+    display: inline-block;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #e0e0e0;
+    min-width: 180px;
+    max-width: 90%;
+    overflow-wrap: break-word;
+    /* Prevent overflow for long handles */
 }
 
-/* Hide Footer Decor as image has snowman */
+/* 4. Body Text */
+.santa-body {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.5;
+    max-width: 75%;
+    margin: 0 auto;
+    font-weight: 500;
+    opacity: 0;
+    /* Ensure text doesn't hit snowman */
+    background: rgba(255, 250, 240, 0.6);
+    /* Subtle backing if needed */
+    backdrop-filter: blur(2px);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+/* Hide Footer Decor */
 .card-footer-decor {
     display: none;
 }
 
-/* 5. Footer Decor */
-/* Hide Footer Decor as image has snowman */
-/* Actions at bottom */
+/* Actions */
 .card-actions {
     position: absolute;
-    bottom: 2rem;
-    gap: 1rem;
+    bottom: 140px;
+    /* Move buttons UP, above the snowman */
+    width: 100%;
     display: flex;
-    transform: translateY(20px);
+    justify-content: center;
+    gap: 0.8rem;
     opacity: 0;
+    z-index: 10;
 }
 
 .action-btn {
-    padding: 0.8rem 1.5rem;
-    border-radius: 30px;
-    font-family: 'Outfit', sans-serif;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -950,4 +1057,130 @@ footer {
     display: flex;
     flex-direction: column;
     justify-content: center;
+}
+
+/* --- Interactive Teaser Section --- */
+/* --- Interactive Teaser Section (Premium Upgrade) --- */
+.interactive-teaser {
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    /* Transparent base to blend with body stars */
+    background: transparent;
+    /* Seamless Fade In/Out Mask */
+    mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+}
+
+#teaser-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.4;
+    pointer-events: none;
+    mix-blend-mode: screen;
+}
+
+/* Optional Scanline Texture (Softened) */
+.interactive-teaser::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(0deg,
+            rgba(255, 255, 255, 0.03),
+            rgba(255, 255, 255, 0.03) 1px,
+            transparent 1px,
+            transparent 4px);
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: overlay;
+}
+
+.relative-content {
+    position: relative;
+    z-index: 10;
+    padding: 3rem;
+    /* backdrop-filter: blur(2px); Maybe too heavy? Let's keep it clean */
+}
+
+/* Tech Pill Badge for "Incoming Transmission" */
+.cipher-text {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--color-gold-light);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+
+    /* Glass Pill Style */
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 50px;
+    background: rgba(212, 175, 55, 0.05);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+    backdrop-filter: blur(5px);
+
+    margin-bottom: 3rem;
+    cursor: crosshair;
+    transition: all 0.3s ease;
+}
+
+.cipher-text:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--color-gold);
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+}
+
+/* Main Title Refinement */
+.interactive-title {
+    font-size: clamp(4rem, 10vw, 7rem);
+    line-height: 0.9;
+    perspective: 1000px;
+    margin-bottom: 2rem;
+}
+
+.hover-word {
+    display: inline-block;
+    transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1), opacity 0.4s ease;
+    cursor: pointer;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    /* Depth shadow */
+}
+
+/* Gradient Text for "Delivery" */
+.gold-text.hover-word {
+    background: linear-gradient(135deg, #d4af37 0%, #fff 50%, #aa771c 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shineSlow 8s linear infinite;
+}
+
+@keyframes shineSlow {
+    to {
+        background-position: 200% center;
+    }
+}
+
+.hover-word:hover {
+    transform: scale(1.05) translateZ(30px);
+    text-shadow: 0 20px 50px rgba(255, 215, 0, 0.3);
+}
+
+.fade-in-up {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 600px;
+    margin: 0 auto;
 }

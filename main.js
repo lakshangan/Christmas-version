@@ -635,25 +635,78 @@ const santaMessages = [
 let userName = "Builder"; // Default
 
 function openGift() {
-    // BYPASS MODAL FOR NOW - Focus on Cinematic Reveal
-    revealGiftSequence();
+    // Show Modal to Capture Name
+    const modal = document.getElementById('username-modal');
+    const instruction = document.getElementById('santa-instruction');
+    const claimBtn = document.getElementById('claim-stake-btn');
+
+    if (modal && instruction) {
+        // Hide initial interaction elements
+        gsap.to([instruction, claimBtn], {
+            opacity: 0, duration: 0.3, onComplete: () => {
+                if (instruction) instruction.style.display = 'none';
+                if (claimBtn) claimBtn.style.display = 'none';
+
+                // Show Modal
+                modal.style.display = 'flex';
+                gsap.to(modal, { opacity: 1, duration: 0.5 });
+
+                // Auto-focus input
+                const input = document.getElementById('username-input');
+                if (input) setTimeout(() => input.focus(), 100);
+            }
+        });
+    } else {
+        // Fallback if modal missing
+        revealGiftSequence();
+    }
 }
 
 function revealGiftSequence() {
     isGiftOpen = true;
 
+    // Double Check Input (Safety)
+    const usernameInput = document.getElementById('username-input');
+    if (usernameInput && usernameInput.value.trim() !== "") {
+        userName = usernameInput.value.trim();
+    }
+
+    // Hide Modal if open
+    const modal = document.getElementById('username-modal');
+    if (modal) gsap.to(modal, { opacity: 0, duration: 0.3, onComplete: () => modal.style.display = 'none' });
+
     // 0. Update Card Text for Poster Layout
-    const msgIndex = Math.floor(Math.random() * santaMessages.length);
     const messageBody = document.querySelector('.santa-body');
-    if (messageBody) messageBody.innerText = "SPECIAL GUEST · 25 DEC\n" + `"${santaMessages[msgIndex]}"` + "\nHosted by OpenLedger";
+    // Intern Santa Specific Message (Extended Pool)
+    const internMessages = [
+        `"Sending you verified blocks of joy, ${userName}! May your latency be low and your spirits high."`,
+        `"I've double-checked the ledger, ${userName}, and you're definitely on the Nice List. Happy Holidays!"`,
+        `"This gift is immutable, just like our holiday spirit. Have a wonderful decentralized celebration, ${userName}!"`,
+        `"Deployed with love from the North Pole (Node 1) to ${userName}. Enjoy your ownership!"`,
+        `"Ho Ho Ho! ${userName}, I've encrypted some extra luck into this gift card. Use it wisely!"`,
+        `"Even the blockchain can't track how much joy I wish for you, ${userName}. Verified by Intern Santa."`,
+        `"Warning: This gift contains high levels of holiday cheer. Handle with care, ${userName}!"`,
+        `"No gas fees attached to this wish, ${userName}. Just pure, unlimited festive vibes."`,
+        `"Scalable joy for a scalable future. Wishing you the best holidays, ${userName}!"`,
+        `"Mining happiness block by block. You’ve earned this reward, ${userName}!"`,
+        `"Smart Contract executed: Deliver infinite joy to ${userName}. status: SUCCESS."`,
+        `"From our nodes to yours, ${userName}, wishing you a network full of love and light."`,
+        `"Zero-knowledge proof that you are awesome, ${userName}. Believe it!"`,
+        `"Santa's sleigh is powered by good vibes this year, and you're the fuel, ${userName}!"`,
+        `"Wrap yourself in the warmth of the season, ${userName}. The best is yet to come."`
+    ];
+    const randomMsg = internMessages[Math.floor(Math.random() * internMessages.length)];
+
+    if (messageBody) messageBody.innerHTML = `${randomMsg}<br><br><span style="font-size: 0.8em; opacity: 0.8;">— Love, OpenLedger Intern Santa 🎅</span>`;
 
     const seasonGreeting = document.querySelector('.season-greeting');
     if (seasonGreeting) seasonGreeting.innerText = "Merry";
 
     const senderInfo = document.querySelector('.sender-info');
-    if (senderInfo) senderInfo.innerText = "Christmas"; // Main Title
+    if (senderInfo) senderInfo.innerText = "Christmas";
 
-    const recipientSpan = document.getElementById('recipient-name');
+    // Update Recipient Name cleanly
+    const recipientSpan = document.querySelector('.recipient-name'); // Class selector based on CSS
     if (recipientSpan) recipientSpan.innerText = userName;
 
     // 1. Hide "Unwrap" UI & Navbar (Focus Mode)
@@ -717,27 +770,129 @@ function revealGiftSequence() {
                             .to(".season-greeting", { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power2.out" })
                             .to(".sender-info", { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.5)" }, "-=0.2") // "Christmas"
                             .to(".recipient-box", { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" }, "-=0.2") // "Recip Name"
+
                             .to(".santa-body", { opacity: 1, y: 0, scale: 1, duration: 0.5 }, "-=0.2")
                             .to(".card-actions", { opacity: 1, y: 0, duration: 0.5 }, "-=0.1");
                     }
                 }, 800);
             }, 800);
         }
+    }); // End of cinematic camera move
+} // End of revealGiftSequence
+
+// --- Restoring the Scene (Close Function) ---
+function closeGift() {
+    isGiftOpen = false;
+
+    // 1. Hide the Greeting Card
+    const letter = document.getElementById('santa-letter');
+    if (letter) {
+        gsap.to(letter, {
+            opacity: 0,
+            scale: 0.8,
+            duration: 0.5,
+            ease: "power2.in",
+            onComplete: () => {
+                letter.classList.remove('active');
+                letter.style.display = 'none'; // Ensure it's gone
+            }
+        });
+    }
+
+    // 2. Clear Username Input for next time (Optional: nice UX)
+    const usernameInput = document.getElementById('username-input');
+    if (usernameInput) usernameInput.value = "";
+
+    // 3. Respawn the Gift Box (Reverse Explosion)
+    // First, Hide Confetti just in case
+    gsap.to(confettiMat, { opacity: 0, duration: 0.5 });
+
+    // Animate Box Back from "Center Stage" to "Original Position"
+    // Original Pos: x: -15, y: 2.0, z: -5
+
+    // Scale up from 0 (Assemblage Effect)
+    gsap.to(giftModel.scale, { x: 3, y: 3, z: 3, duration: 0.8, ease: "back.out(1.2)", delay: 0.3 });
+
+    gsap.to(giftGroup.position, {
+        x: -15,
+        y: 2.0,
+        z: -5,
+        duration: 1.5,
+        ease: "power2.inOut"
     });
+
+    gsap.to(giftGroup.rotation, {
+        y: 0,
+        duration: 1.5,
+        ease: "power2.inOut"
+    });
+
+    // 4. Move Camera Back to Section View
+    gsap.to(camera.position, {
+        x: 0,
+        y: 2,
+        z: 8, // Original safe spot
+        duration: 1.5,
+        ease: "power2.inOut"
+    });
+
+    // 5. Restore UI (Instructions & Claims)
+    // 5. Restore UI (Instructions & Claims)
+    setTimeout(() => {
+        // Restore the main container's interactivity first
+        gsap.to("#artifact-reveal .center-content", { opacity: 1, duration: 0.5, pointerEvents: "all" });
+
+        const instruction = document.getElementById('santa-instruction');
+        const claimBtn = document.getElementById('claim-stake-btn');
+        const nav = document.querySelector('nav');
+
+        if (instruction) {
+            instruction.style.display = 'block';
+            gsap.to(instruction, { opacity: 1, duration: 0.5 });
+        }
+
+        if (claimBtn) {
+            claimBtn.style.display = 'inline-block';
+            gsap.to(claimBtn, { opacity: 1, duration: 0.5 });
+        }
+
+        // Show Nav Bar
+        if (nav) gsap.to(nav, { opacity: 1, duration: 0.5 });
+
+        // Reset Modal State just in case
+        const modal = document.getElementById('username-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.style.opacity = '0';
+        }
+
+    }, 1000);
 }
 
+// Ensure close button is wired up
+const finalCloseBtn = document.getElementById('close-letter');
+if (finalCloseBtn) {
+    finalCloseBtn.onclick = (e) => {
+        e.stopPropagation();
+        closeGift();
+    };
+}
+
+
 // Event Listeners for Modal
-// Event Listeners for Modal
-// Use explicit logic to ensuring binding
 setTimeout(() => {
     const submitNameBtn = document.getElementById('submit-name-btn');
     const usernameInput = document.getElementById('username-input');
+    const cancelModalBtn = document.getElementById('close-modal-btn');
+    const modal = document.getElementById('username-modal');
 
     if (submitNameBtn && usernameInput) {
         submitNameBtn.onclick = (e) => {
             e.stopPropagation();
             if (usernameInput.value.trim() !== "") {
                 userName = usernameInput.value.trim();
+            } else {
+                userName = "Builder";
             }
             revealGiftSequence();
         };
@@ -745,46 +900,56 @@ setTimeout(() => {
         // Enter key support
         usernameInput.onkeypress = (e) => {
             if (e.key === 'Enter') {
+                e.preventDefault();
                 e.stopPropagation();
                 if (usernameInput.value.trim() !== "") {
                     userName = usernameInput.value.trim();
+                } else {
+                    userName = "Builder";
                 }
                 revealGiftSequence();
             }
         };
-        console.log("Modal Listeners Attached");
-    } else {
-        console.error("Modal Elements not found!");
     }
 
+    if (cancelModalBtn && modal) {
+        cancelModalBtn.onclick = (e) => {
+            e.stopPropagation();
+            // Close modal and restore initial state
+            gsap.to(modal, {
+                opacity: 0, duration: 0.3, onComplete: () => {
+                    modal.style.display = 'none';
+                    // Restore interaction buttons
+                    const instruction = document.getElementById('santa-instruction');
+                    const claimBtn = document.getElementById('claim-stake-btn');
+                    if (instruction) { instruction.style.display = 'block'; gsap.to(instruction, { opacity: 1 }); }
+                    if (claimBtn) { claimBtn.style.display = 'inline-block'; gsap.to(claimBtn, { opacity: 1 }); }
+                }
+            });
+        };
+    }
     // Download Card Logic
     const downloadBtn = document.getElementById('download-card-btn');
     if (downloadBtn) {
         downloadBtn.onclick = (e) => {
             e.stopPropagation();
             const cardElement = document.getElementById('santa-letter');
-
-            // Hide buttons for capture
             const actions = document.querySelector('.card-actions');
             if (actions) actions.style.display = 'none';
 
-            // Debug check
             if (typeof html2canvas === 'undefined') {
                 alert("Greeting Card generator is loading... please try again in a moment.");
                 if (actions) actions.style.display = 'flex';
                 return;
             }
 
-            // Capture
             html2canvas(cardElement, {
                 backgroundColor: null,
-                scale: 2,
-                useCORS: true // Try to handle images better
+                scale: 3,
+                useCORS: true,
+                logging: false
             }).then(canvas => {
-                // Restore buttons
                 if (actions) actions.style.display = 'flex';
-
-                // Trigger Download
                 const link = document.createElement('a');
                 link.download = `OpenLedger-Gift-${userName}.png`;
                 link.href = canvas.toDataURL('image/png');
@@ -794,38 +959,10 @@ setTimeout(() => {
                 if (actions) actions.style.display = 'flex';
             });
         };
-        console.log("Download Listener Attached");
     }
-}, 500); // Small delay to ensure DOM is ready/stable
+}, 500);
 
-function closeGift() {
-    isGiftOpen = false;
-
-    // 1. Hide Letter
-    const letter = document.getElementById('santa-letter');
-    if (letter) {
-        letter.classList.remove('active');
-        gsap.to(letter, { opacity: 0, scale: 0.8, duration: 0.3 });
-    }
-
-    // 2. Restore View (Zoom Out)
-    gsap.to(camera.position, { x: -5, y: 2.0, z: 12, duration: 1.5, ease: "power2.inOut" });
-
-    // 3. Restore Gift (Pop back in at Left)
-    gsap.to(giftGroup.position, { x: -15, y: 2.0, z: -5, duration: 1.5, ease: "power2.inOut" });
-    gsap.to(giftGroup.rotation, { y: 0, duration: 1.5 }); // Reset rotation
-
-    // Scale Up
-    gsap.to(giftModel.scale, { x: 2.5, y: 2.5, z: 2.5, duration: 0.8, delay: 0.5, ease: "elastic.out(1, 0.5)" });
-
-    // 4. Restore UI
-    gsap.to("#artifact-reveal .center-content", { opacity: 1, duration: 0.5, delay: 1.0, pointerEvents: "all" });
-    gsap.to("nav", { opacity: 1, duration: 0.5 }); // Show Navbar
-
-    // Clear Input
-    if (typeof usernameInput !== 'undefined' && usernameInput) usernameInput.value = "";
-    userName = "Builder"; // Reset default
-}
+// Duplicate closeGift() removed
 
 
 // --- Scroll / Animation ---
@@ -1193,4 +1330,178 @@ if (nav) {
             nav.classList.remove('scrolled');
         }
     });
+}
+
+// --- Interactive Teaser Logic ---
+const teaserSection = document.querySelector('.interactive-teaser');
+const cipherText = document.querySelector('.cipher-text');
+
+if (teaserSection && cipherText) {
+    const originalText = cipherText.dataset.value;
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*"; // Cyber characters
+    let interval = null;
+
+    // Cipher Animation Function
+    const runCipher = () => {
+        let iterations = 0;
+        clearInterval(interval);
+        interval = setInterval(() => {
+            cipherText.innerText = originalText
+                .split("")
+                .map((letter, index) => {
+                    if (index < iterations) return originalText[index];
+                    return chars[Math.floor(Math.random() * chars.length)];
+                })
+                .join("");
+
+            if (iterations >= originalText.length) {
+                clearInterval(interval);
+            }
+            iterations += 1 / 2; // Control speed
+        }, 30);
+    };
+
+    // Run once on load/reveal (managed by ScrollTrigger if possible, but intersection observer is easier here)
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                runCipher();
+            }
+        });
+    }, { threshold: 0.5 });
+    observer.observe(teaserSection);
+
+    // Run on hover
+    teaserSection.addEventListener('mouseenter', runCipher);
+
+    // Mouse Tracking for Parallax
+    teaserSection.addEventListener('mousemove', (e) => {
+        const rect = teaserSection.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const xNorm = (x / rect.width) * 2 - 1;
+        const yNorm = (y / rect.height) * 2 - 1;
+
+        const content = teaserSection.querySelector('.relative-content');
+        if (content) {
+            gsap.to(content, {
+                x: xNorm * 30, // 30px movement range
+                y: yNorm * 30,
+                duration: 0.8,
+                ease: "power2.out"
+            });
+        }
+
+        // Tilt Effect on Title
+        const title = teaserSection.querySelector('.interactive-title');
+        if (title) {
+            gsap.to(title, {
+                rotationX: -yNorm * 5, // 5 degree tilt
+                rotationY: xNorm * 5,
+                duration: 0.5,
+                ease: "power1.out"
+            });
+        }
+    });
+
+    // Reset on leave
+    teaserSection.addEventListener('mouseleave', () => {
+        const content = teaserSection.querySelector('.relative-content');
+        const title = teaserSection.querySelector('.interactive-title');
+        if (content) {
+            gsap.to(content, { x: 0, y: 0, duration: 0.8 });
+        }
+        if (title) {
+            gsap.to(title, { rotationX: 0, rotationY: 0, duration: 0.8 });
+        }
+    });
+}
+
+// --- Canvas Matrix Rain (Subtle Gold) Logic ---
+const canvasEl = document.getElementById('teaser-canvas');
+if (canvasEl) {
+    const ctx = canvasEl.getContext('2d');
+    let width, height;
+
+    // Resizing
+    const resizeObserver = new ResizeObserver(() => {
+        width = canvasEl.offsetWidth;
+        height = canvasEl.offsetHeight;
+        canvasEl.width = width;
+        canvasEl.height = height;
+    });
+    resizeObserver.observe(canvasEl);
+
+    /* Particles */
+    const columns = 40;
+    const drops = [];
+
+    // Initialize drops
+    for (let x = 0; x < columns; x++) {
+        drops[x] = {
+            x: Math.random() * width,
+            y: Math.random() * height,
+            speed: 1 + Math.random() * 2,
+            length: 10 + Math.random() * 20,
+            alpha: 0.1 + Math.random() * 0.3
+        };
+    }
+
+    // Interaction Force
+    let mouseX = -1000;
+    let mouseY = -1000;
+
+    canvasEl.parentElement.addEventListener('mousemove', (e) => {
+        const rect = canvasEl.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+    });
+
+    canvasEl.parentElement.addEventListener('mouseleave', () => {
+        mouseX = -1000;
+        mouseY = -1000;
+    });
+
+    const draw = () => {
+        // Clear with fade for trail (optional, but clean clear is better for this style)
+        ctx.clearRect(0, 0, width, height);
+
+        ctx.strokeStyle = "rgba(212, 175, 55, 0.4)"; // Gold
+        ctx.lineWidth = 1;
+
+        drops.forEach(d => {
+            // Draw Line
+            ctx.beginPath();
+            const grad = ctx.createLinearGradient(d.x, d.y, d.x, d.y - d.length);
+            grad.addColorStop(0, `rgba(212, 175, 55, ${d.alpha})`); // Head
+            grad.addColorStop(1, `rgba(212, 175, 55, 0)`); // Tail
+            ctx.strokeStyle = grad;
+            ctx.moveTo(d.x, d.y);
+            ctx.lineTo(d.x, d.y - d.length);
+            ctx.stroke();
+
+            // Move
+            d.y += d.speed;
+
+            // Reset
+            if (d.y - d.length > height) {
+                d.y = -d.length;
+                d.x = Math.random() * width;
+                d.speed = 1 + Math.random() * 2;
+            }
+
+            // Interaction: Mouse repels drops horizontally
+            const dist = Math.abs(d.x - mouseX);
+            const yDist = Math.abs(d.y - mouseY);
+            if (dist < 100 && yDist < 300) {
+                if (d.x < mouseX) d.x -= 2;
+                else d.x += 2;
+            }
+        });
+
+        requestAnimationFrame(draw);
+    };
+
+    draw();
 }
