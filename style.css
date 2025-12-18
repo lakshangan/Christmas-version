@@ -929,6 +929,25 @@ footer {
     z-index: 10000;
     display: none;
     opacity: 0;
+    transition: all 0.8s ease;
+}
+
+/* Celebration State */
+body.celebration-active .card-overlay {
+    background: radial-gradient(circle at center, rgba(139, 0, 0, 0.9) 0%, rgba(26, 0, 0, 0.95) 100%);
+    backdrop-filter: blur(15px);
+}
+
+#party-sprinklers {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10001;
+    /* Above overlay, below card */
+    pointer-events: none;
+    display: none;
 }
 
 .card-content-wrapper {

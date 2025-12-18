@@ -429,6 +429,8 @@ scene.add(forgeGroup);
 const giftGroup = new THREE.Group();
 let giftModel;
 let isGiftOpen = false;
+var sprinklerActive = false; // Global celebration flag
+
 
 // Load Gift Box GLB
 loader.load('/Gift Box.glb', (gltf) => {
@@ -751,6 +753,7 @@ function revealGiftSequence() {
             setTimeout(() => {
                 gsap.to(giftModel.scale, { x: 0, y: 0, z: 0, duration: 0.2, ease: "back.in(2)" });
                 explodeConfetti();
+                startCelebration(); // Start ribbons and bg change
 
                 // 5. Show Letter (Greeting Card Animated Entrance)
                 setTimeout(() => {
@@ -802,6 +805,7 @@ function revealGiftSequence() {
 // --- Restoring the Scene (Close Function) ---
 function closeGift() {
     isGiftOpen = false;
+    stopCelebration(); // Revert ribbons and bg change
 
     const letter = document.getElementById('santa-letter');
     const overlay = document.querySelector('.card-overlay');
@@ -1456,7 +1460,11 @@ if (teaserSection && cipherText) {
 const canvasEl = document.getElementById('teaser-canvas');
 if (canvasEl) {
     const ctx = canvasEl.getContext('2d');
-    let width, height;
+    // Initialize dimensions immediately
+    let width = canvasEl.offsetWidth || window.innerWidth;
+    let height = canvasEl.offsetHeight || window.innerHeight;
+    canvasEl.width = width;
+    canvasEl.height = height;
 
     // Resizing
     const resizeObserver = new ResizeObserver(() => {
@@ -1538,4 +1546,105 @@ if (canvasEl) {
     };
 
     draw();
+}
+// --- Celebration Handlers ---
+
+const sprinklerCanvas = document.getElementById('party-sprinklers');
+const sCtx = sprinklerCanvas ? sprinklerCanvas.getContext('2d') : null;
+let sWidth, sHeight;
+const ribbons = [];
+
+function initSprinklers() {
+    if (!sprinklerCanvas) return;
+    sWidth = window.innerWidth;
+    sHeight = window.innerHeight;
+    sprinklerCanvas.width = sWidth;
+    sprinklerCanvas.height = sHeight;
+}
+
+window.addEventListener('resize', initSprinklers);
+initSprinklers();
+
+class Ribbon {
+    constructor() {
+        this.reset();
+    }
+    reset() {
+        this.x = sWidth / 2;
+        this.y = sHeight / 2;
+        // Stronger initial burst
+        const angle = Math.random() * Math.PI * 2;
+        const force = 10 + Math.random() * 15;
+        this.vx = Math.cos(angle) * force;
+        this.vy = Math.sin(angle) * force - 5; // Upward bias
+        this.grav = 0.25;
+        this.friction = 0.98;
+        // Christmas palette: Deep Red, Gold, White, Icy Blue
+        this.color = [`#c41e3a`, `#ffd700`, `#ffffff`, `#00f2ff`][Math.floor(Math.random() * 4)];
+        this.history = [];
+        this.maxHistory = 20; // Longer ribbons
+        this.life = 1.0;
+        this.decay = 0.005 + Math.random() * 0.01;
+        this.width = 3 + Math.random() * 4;
+    }
+    update() {
+        this.history.unshift({ x: this.x, y: this.y });
+        if (this.history.length > this.maxHistory) this.history.pop();
+
+        this.vx *= this.friction;
+        this.vy *= this.friction;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += this.grav;
+        this.life -= this.decay;
+
+        if (this.life <= 0) this.reset();
+    }
+    draw() {
+        if (this.history.length < 2) return;
+        sCtx.beginPath();
+        sCtx.lineWidth = this.width;
+        sCtx.strokeStyle = this.color;
+        sCtx.lineCap = 'round';
+        sCtx.lineJoin = 'round';
+        sCtx.globalAlpha = this.life;
+        sCtx.moveTo(this.history[0].x, this.history[0].y);
+        for (let i = 1; i < this.history.length; i++) {
+            sCtx.lineTo(this.history[i].x, this.history[i].y);
+        }
+        sCtx.stroke();
+    }
+}
+
+// Pre-fill ribbons
+for (let i = 0; i < 60; i++) ribbons.push(new Ribbon());
+
+function animateSprinklers() {
+    if (!sprinklerActive) return;
+    sCtx.clearRect(0, 0, sWidth, sHeight);
+    ribbons.forEach(r => {
+        r.update();
+        r.draw();
+    });
+    requestAnimationFrame(animateSprinklers);
+}
+
+function startCelebration() {
+    sprinklerActive = true;
+    document.body.classList.add('celebration-active');
+    if (sprinklerCanvas) sprinklerCanvas.style.display = 'block';
+    animateSprinklers();
+}
+
+function stopCelebration() {
+    sprinklerActive = false;
+    document.body.classList.remove('celebration-active');
+    if (sprinklerCanvas) {
+        gsap.to(sprinklerCanvas, {
+            opacity: 0, duration: 0.5, onComplete: () => {
+                sprinklerCanvas.style.display = 'none';
+                sprinklerCanvas.style.opacity = '1';
+            }
+        });
+    }
 }
