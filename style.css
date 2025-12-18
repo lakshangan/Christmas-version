@@ -927,12 +927,46 @@ footer {
 }
 
 /* On very narrow screens, satisfy width first */
-@media (max-aspect-ratio: 3/4) {
+/* On very narrow screens, satisfy width first */
+@media (max-width: 768px) {
     .sharable-card {
-        width: 90vw;
-        height: auto;
-        max-height: 85vh;
-        /* Safety cap */
+        width: 92vw;
+        height: 90vh;
+        inset: 5vh auto;
+        border-radius: 15px;
+        padding-bottom: 80px;
+        /* Room for bottom actions */
+    }
+
+    .card-content-wrapper {
+        padding: 2.5rem 1.5rem !important;
+    }
+
+    .sender-info {
+        font-size: 1.6rem !important;
+    }
+
+    .recipient-name {
+        font-size: 1.5rem !important;
+    }
+
+    .santa-body {
+        font-size: 0.95rem !important;
+        max-width: 95% !important;
+        padding: 15px !important;
+    }
+
+    .card-actions {
+        bottom: 15px !important;
+        padding: 0 10px !important;
+        flex-direction: column;
+        gap: 10px !important;
+    }
+
+    .action-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px !important;
     }
 }
 
@@ -1513,4 +1547,155 @@ body.celebration-active .card-overlay {
 .teaser-meta span:last-child {
     color: #fff;
     font-weight: 600;
+}
+
+/* Mobile Desktop Notice */
+#mobile-desktop-notice {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    color: var(--color-gold);
+    padding: 10px 20px;
+    z-index: 10000;
+    font-size: 0.8rem;
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--color-gold);
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+#mobile-desktop-notice button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+@media (max-width: 1024px) {
+    #mobile-desktop-notice {
+        display: flex;
+    }
+}
+
+/* --- RESPONSIVENESS --- */
+
+@media (max-width: 1024px) {
+    .highlight-container {
+        padding: 0 5%;
+    }
+
+    .content-block.left,
+    .content-block.right {
+        margin: 0 auto;
+        width: 90%;
+        max-width: none;
+        text-align: center;
+        border: none;
+        padding: 2rem 0;
+    }
+
+    .content-block h2 {
+        font-size: 2.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+
+    /* Hide intermediate subsections on mobile as requested */
+    #crystalline-network,
+    #model-factory-forge {
+        display: none !important;
+    }
+
+    .glass-nav {
+        width: 95%;
+        padding: 0.8rem 1.5rem;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .nav-links {
+        display: none;
+    }
+
+    .highlight-container {
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 5vh;
+        text-align: center;
+    }
+
+    .highlight-text-col {
+        max-width: 100%;
+        padding-right: 0;
+        margin-bottom: 2rem;
+        order: 1;
+        /* Text first */
+    }
+
+    .hero-main-title {
+        font-size: 2.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .highlight-spacer-col {
+        height: 350px;
+        width: 100%;
+        order: 2;
+        /* 3D Model aligned below text */
+    }
+
+    /* Artifact Reveal: Centered alignment for 3D Gift Box */
+    #artifact-reveal .center-content {
+        position: relative;
+        left: 0;
+        top: 0;
+        transform: none;
+        width: 100%;
+        margin-top: 2rem;
+        background: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center;
+        padding: 2rem 1.5rem;
+    }
+
+    #artifact-reveal {
+        flex-direction: column;
+        height: auto;
+        padding: 10vh 5% 5vh;
+    }
+
+    .teaser-glass-box.holographic {
+        padding: 2rem 1.5rem;
+        min-height: auto;
+    }
+
+    .shimmer-gold {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-main-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-lead-in {
+        font-size: 0.8rem;
+    }
+
+    .content-block h2 {
+        font-size: 2rem;
+    }
 }

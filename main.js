@@ -1002,6 +1002,7 @@ setTimeout(() => {
 
 // --- Scroll / Animation ---
 
+const isMobile = window.innerWidth < 768;
 const cameraTarget = new THREE.Vector3(0, 2, 0);
 
 const tl = gsap.timeline({
@@ -1009,40 +1010,29 @@ const tl = gsap.timeline({
         trigger: "#main-wrapper",
         start: "top top",
         end: "bottom bottom",
-        scrub: 1.0, // More responsive (was 1.5)
-        // snap: 1 / 4 // Optional: snap to sections
+        scrub: 1.0,
     }
 });
 
-
-
-
-
-
-
-
-// Scene 0: Video Hero -> Mascot Showcase (Vertical Reveal to "Side" Spot)
-// 1. Move Sleigh Up & Right (Proper Right Position)
+// Scene 0: Video Hero -> Mascot Showcase
 tl.to(heroGroup.position, {
-    x: 3.5, // Move to Right Side (align with spacer column)
-    y: 1.0,
+    x: isMobile ? 0 : 3.5,
+    y: isMobile ? -1.5 : 1.0, // Move down on mobile to clear text
     z: 0,
     duration: 2.0,
     ease: "power2.out"
 }, "scene0")
-    // 2. Rotate Sleigh (Side/3-4 View)
     .to(heroGroup.rotation, {
         x: 0.05,
-        y: -0.8, // Angled towards user
+        y: isMobile ? -0.1 : -0.8,
         z: 0.0,
         duration: 2.0,
         ease: "power2.inOut"
     }, "scene0")
-    // 3. Camera Move (Framing the Right Side)
     .to(camera.position, {
-        x: 0, // Keep camera center to see both text and model
+        x: 0,
         y: 1.5,
-        z: 9,
+        z: isMobile ? 12 : 9, // Further zoom on mobile
         duration: 2.0,
         ease: "power2.inOut"
     }, "scene0")
@@ -1098,21 +1088,23 @@ tl.to(camera.position, {
     x: 0,
     y: 0,
     z: 10,
-    duration: 0.5,
+    duration: isMobile ? 0 : 0.5,
     ease: "expo.in"
 }, "scene1")
     // Hide Particles
-    .to([softSnowMat, dustMat, starsMat], { opacity: 0, duration: 0.5 }, "scene1")
+    .to([softSnowMat, dustMat, starsMat], { opacity: 0, duration: isMobile ? 0 : 0.5 }, "scene1")
     // Close Curtains
     .to([leftCurtain, rightCurtain], {
-        scaleX: 1,
-        duration: 0.8,
+        scaleX: isMobile ? 0 : 1,
+        duration: isMobile ? 0 : 0.8,
         ease: "circ.inOut",
         onStart: () => {
-            const transSfx = document.getElementById('transition-sfx');
-            if (transSfx) {
-                transSfx.volume = 0.4;
-                transSfx.play().catch(e => console.log("Audio blocked"));
+            if (!isMobile) {
+                const transSfx = document.getElementById('transition-sfx');
+                if (transSfx) {
+                    transSfx.volume = 0.4;
+                    transSfx.play().catch(e => console.log("Audio blocked"));
+                }
             }
         }
     }, "scene1+=0.3")
@@ -1121,47 +1113,48 @@ tl.to(camera.position, {
     .to(camera.position, { x: 0, y: 0, z: -5, duration: 0.1 }, "scene1+=1.1") // Teleport
     .to(cameraTarget, { x: 0, y: 0, z: -20, duration: 0.1 }, "scene1+=1.1")
     .to(highlightGroup.scale, { x: 0, y: 0, z: 0, duration: 0.1 }, "scene1+=1.1")
-    .to(heroGroup.scale, { x: 0, y: 0, z: 0, duration: 0.1 }, "scene1+=1.1") // HIDE SANTA (Scale 0 is safer)
+    .to(heroGroup.scale, { x: 0, y: 0, z: 0, duration: 0.1 }, "scene1+=1.1")
 
     // Open Curtains
-    .to([leftCurtain, rightCurtain], { scaleX: 0, duration: 0.8, ease: "circ.inOut" }, "scene1+=1.2")
+    .to([leftCurtain, rightCurtain], { scaleX: 0, duration: isMobile ? 0 : 0.8, ease: "circ.inOut" }, "scene1+=1.2")
 
-    // Reveal Crystal Orb (Shifted Left for layout)
-    .to(crystalGroup.position, { x: -6, duration: 0 }, "scene1+=1.5") // Instant set before scale up or animate if preferred
+    // Reveal Crystal Orb
+    .to(crystalGroup.position, { x: isMobile ? 0 : -6, duration: 0 }, "scene1+=1.5")
     .to(crystalGroup.scale, {
-        x: 1, y: 1, z: 1,
-        duration: 1.5,
+        x: isMobile ? 0 : 1, y: isMobile ? 0 : 1, z: isMobile ? 0 : 1,
+        duration: isMobile ? 0 : 1.5,
         ease: "back.out(1.2)"
     }, "scene1+=1.5")
 
     // Restore Particles
-    .to(softSnowMat, { opacity: 0.7, duration: 1.5 }, "scene1+=1.5")
-    .to(dustMat, { opacity: 0.5, duration: 1.5 }, "scene1+=1.5")
-    .to(starsMat, { opacity: 0.8, duration: 1.5 }, "scene1+=1.5")
+    .to(softSnowMat, { opacity: 0.7, duration: isMobile ? 0 : 1.5 }, "scene1+=1.5")
+    .to(dustMat, { opacity: 0.5, duration: isMobile ? 0 : 1.5 }, "scene1+=1.5")
+    .to(starsMat, { opacity: 0.8, duration: isMobile ? 0 : 1.5 }, "scene1+=1.5")
 
     // Reveal Crystalline Content
     .to("#crystalline-network .content-block", {
-        opacity: 1,
+        opacity: isMobile ? 0 : 1,
         y: 0,
-        duration: 1.0,
+        duration: isMobile ? 0 : 1.0,
         ease: "power2.out"
     }, "scene1+=1.5");
+
 
 
 // Scene 2: Crystal Orb -> Forge
 // Forge at (20, 2, -5)
 tl.to(camera.position, {
     x: 20,
-    y: 2.5, // Eye level (was 4)
-    z: 7,   // Better framing (was 5)
-    duration: 1.5,
+    y: 2.5,
+    z: 7,
+    duration: isMobile ? 0 : 1.5,
     ease: "power3.inOut"
 }, "scene2")
     .to(cameraTarget, {
         x: 20,
         y: 2,
         z: -5,
-        duration: 1.5,
+        duration: isMobile ? 0 : 1.5,
         ease: "power2.inOut"
     }, "scene2")
     // Hide Crystal
@@ -1169,36 +1162,24 @@ tl.to(camera.position, {
         x: 0,
         y: 0,
         z: 0,
-        duration: 0.5
+        duration: isMobile ? 0 : 0.5
     }, "scene2")
-
-    // Animate Forge Assembly - REMOVED (Replaced by Static Octopus)
-    /*
-    .to(engineMod.position, {
-        x: 1.1,
-        duration: 1,
-        ease: "back.out(1.7)"
-    }, "scene2+=0.5")
-    .to(sensorMod.position, {
-        x: -1.1,
-        duration: 1,
-        ease: "back.out(1.7)"
-    }, "scene2+=0.5")
-    */
 
     // Beacon Activate
     .to(beaconLight, {
-        intensity: 3,
-        duration: 0.3
+        intensity: isMobile ? 0 : 3,
+        duration: isMobile ? 0 : 0.3
     }, "scene2+=1.3")
 
     // Reveal Forge Content
     .to("#model-factory-forge .content-block", {
-        opacity: 1,
+        opacity: isMobile ? 0 : 1,
         y: 0,
-        duration: 1.0,
+        duration: isMobile ? 0 : 1.0,
         ease: "power2.out"
     }, "scene2+=1.0");
+
+
 
 // --- NEW SECTION: GIFT TEASER (Scene 2.5) ---
 tl.to({}, { duration: 0.5 }, ">") // Pause
@@ -1207,10 +1188,13 @@ tl.to({}, { duration: 0.5 }, ">") // Pause
     .to("#model-factory-forge .content-block", { opacity: 0, y: -20, duration: 0.5 }, "sceneTeaser")
     // Hide Forge 3D
     .to(forgeGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 }, "sceneTeaser")
+    // HIDE HERO (SANTA) ON MOBILE - Ensure it doesn't linger
+    .to(heroGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 }, "sceneTeaser")
+
     .to(camera.position, { // Fly transition
         x: 0,
-        y: 5,
-        z: 30, // Way back
+        y: isMobile ? 8 : 5,
+        z: isMobile ? 40 : 30, // Stay further back on mobile
         duration: 2.0,
         ease: "power2.inOut"
     }, "sceneTeaser")
@@ -1237,17 +1221,17 @@ tl.to({}, { duration: 0.5 }, ">") // Pause
 // Scene 3: Teaser -> Gift (SPLIT VIEW)
 // Gift Box at (-15, 2.0, -5) -> We will frame it on the LEFT
 tl.to(camera.position, {
-    x: -5,  // Centered/Left-ish for better framing (was -8)
-    y: 2.0,
-    z: 12,  // Zoom out slightly to see whole box
+    x: isMobile ? -5 : -5,
+    y: isMobile ? 3.0 : 2.0,
+    z: isMobile ? 18 : 12,
     duration: 1.5,
     ease: "power2.inOut"
 }, "scene3")
     // Hide Forge/Teaser if not already hidden
     .to(forgeGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 }, "scene3")
     .to(cameraTarget, {
-        x: -5,  // Look at center-ish
-        y: 2.0,
+        x: isMobile ? -5 : -5,
+        y: isMobile ? 1.0 : 2.0,
         z: -5,
         duration: 1.5,
         ease: "power2.inOut"

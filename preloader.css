@@ -23,7 +23,7 @@
 
 .loader-title {
     font-family: var(--font-heading);
-    font-size: 4rem;
+    font-size: clamp(2rem, 10vw, 4rem);
     color: #fff;
     letter-spacing: 0.2em;
     text-transform: uppercase;
