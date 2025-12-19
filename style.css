@@ -164,11 +164,12 @@ h3 {
 }
 
 .hero-subtitle {
-    font-size: 1.2rem;
+    font-size: clamp(0.9rem, 1.5vw, 1.2rem);
     font-weight: 300;
     letter-spacing: 0.1em;
     opacity: 0.8;
     text-transform: uppercase;
+    margin: 0;
 }
 
 /* Glass UI */
@@ -184,8 +185,8 @@ h3 {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 100;
-    /* Higher than canvas (50) */
+    z-index: 10000;
+    /* Highest possible to stay above curtains and models */
 
     /* Premium Glass Capsule */
     background: rgba(255, 255, 255, 0.05);
@@ -247,9 +248,10 @@ section {
     min-height: 100vh;
     width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2rem;
+    padding: 4rem 2rem;
     position: relative;
 }
 
@@ -257,12 +259,19 @@ section {
     text-align: center;
 }
 
+#hero .hero-content {
+    opacity: 0;
+    transform: translateY(30px);
+    margin: 0;
+    padding: 2rem 0;
+}
+
 .vision-section {
     background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
     color: white;
     overflow: hidden;
     position: relative;
-    padding: 5rem 2rem;
+    padding: 2rem;
 }
 
 .vision-section h2 {
@@ -331,21 +340,16 @@ section {
 .content-block {
     max-width: 600px;
     background: transparent;
-    /* Remove Glass Box */
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
     border: none;
     padding: 2rem 0 2rem 3rem;
-    /* Left padding for accent */
     border-left: 2px solid var(--color-gold);
-    /* Minimal Accent Line */
-    box-shadow: none;
     text-align: left;
+    margin: 2rem 0;
 }
 
 .content-block.right {
     margin-left: auto;
-    margin-right: 15%;
+    margin-right: 10%;
     border-left: none;
     border-right: 2px solid var(--color-gold);
     padding: 2rem 3rem 2rem 0;
@@ -354,7 +358,7 @@ section {
 
 .content-block.left {
     margin-right: auto;
-    margin-left: 15%;
+    margin-left: 10%;
 }
 
 .content-block h2 {
@@ -405,8 +409,7 @@ footer {
 
 /* Initially hide content to reveal after transitions */
 #crystalline-network .content-block,
-#model-factory-forge .content-block,
-#gift-teaser .center-content {
+#gift-teaser .teaser-glass-container {
     opacity: 0;
     transform: translateY(20px);
 }
@@ -437,21 +440,26 @@ footer {
 
 /* Gift Reveal - Split Layout (Text Right) */
 #artifact-reveal .center-content {
-    position: absolute;
-    left: 70%;
-    /* Move to right side */
-    top: 50%;
-    /* Center vertically */
-    transform: translate(-50%, -50%);
-    /* Center on its own point */
-    width: 40%;
-    /* Squeeze text width */
+    position: relative;
+    max-width: 500px;
     z-index: 10;
     text-align: left;
-    /* Align text left for readability */
-    padding: 2rem;
-    /* Optional: distinct background for text box */
-    /* background: rgba(0,0,0,0.4); */
+    padding: 2.5rem;
+    margin-left: auto;
+    margin-right: 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 400px;
+}
+
+@media (max-width: 1024px) {
+    #artifact-reveal .center-content {
+        margin-left: 0;
+        width: 100%;
+        max-width: 600px;
+        text-align: center;
+    }
 }
 
 .mascot-text-col {
@@ -532,8 +540,8 @@ footer {
 
 .highlight-spacer-col {
     flex: 1;
-    height: 600px;
-    /* Increased height for bigger model area */
+    height: 10vh;
+    /* Reduced to maintain continuity as requested */
     pointer-events: none;
 }
 

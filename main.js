@@ -376,41 +376,8 @@ const sleigGoldMat = new THREE.MeshStandardMaterial({
     metalness: 1.0
 });
 
-// 1. Octopus Intern (Replacing Sleigh Parts)
+// 1. Octopus Intern - REMOVED
 let forgeOctopus = null;
-loader.load('/orange octopus 3d model.glb', (gltf) => {
-    forgeOctopus = gltf.scene;
-
-    // Auto-center and scale
-    const box = new THREE.Box3().setFromObject(forgeOctopus);
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-
-    forgeOctopus.position.sub(center);
-    const maxDim = Math.max(size.x, size.y, size.z);
-    // Adjust scale to fit in the forge area (approx 4-5 units)
-    const scaleFactor = 5 / maxDim;
-    forgeOctopus.scale.setScalar(scaleFactor);
-
-    forgeOctopus.traverse((node) => {
-        if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-            // brightness boost for raw model
-            if (node.material) {
-                node.material.envMapIntensity = 1.0;
-                node.material.needsUpdate = true;
-            }
-        }
-    });
-
-    // Mark as interactive
-    forgeOctopus.name = 'forgeOctopus';
-
-    forgeGroup.add(forgeOctopus);
-}, undefined, (error) => {
-    console.error("Error loading Octopus for Forge:", error);
-});
 
 // Attribution Beacon (Simplifed - Just Light)
 const beaconLight = new THREE.PointLight(0xfffae0, 2, 10); // Warm White/Gold
@@ -518,43 +485,9 @@ function onDocClick(event) {
             return;
         }
 
-        // Check for Forge Octopus (Interactive Poke)
-        const hitOctopus = intersects.find(hit => {
-            // Traverse up to find if it's the octopus
-            let obj = hit.object;
-            while (obj) {
-                if (obj.name === 'forgeOctopus') return true;
-                obj = obj.parent;
-            }
-            return false;
-        });
-
-        if (hitOctopus) {
-            interactOctopus();
-        }
     }
 }
 
-function interactOctopus() {
-    if (!forgeOctopus) return;
-
-    // fun bounce/spin animation
-    gsap.to(forgeOctopus.scale, {
-        x: forgeOctopus.scale.x * 1.2,
-        y: forgeOctopus.scale.y * 0.8,
-        z: forgeOctopus.scale.z * 1.2,
-        duration: 0.1,
-        yoyo: true,
-        repeat: 1,
-        ease: "power2.inOut"
-    });
-
-    gsap.to(forgeOctopus.rotation, {
-        y: forgeOctopus.rotation.y + Math.PI * 2,
-        duration: 1,
-        ease: "elastic.out(1, 0.5)"
-    });
-}
 
 // --- 3D Confetti Logic (Vibrant Colorful Bits) ---
 const confettiCount = 800;
@@ -1031,24 +964,24 @@ const tl = gsap.timeline({
 
 // Scene 0: Video Hero -> Mascot Showcase
 tl.to(heroGroup.position, {
-    x: isMobile ? 0 : 3.5,
-    y: isMobile ? -1.5 : 1.0, // Move down on mobile to clear text
+    x: isMobile ? 0 : 4.0, // Move a bit more to the right
+    y: isMobile ? -1.5 : 0, // Centered vertically
     z: 0,
-    duration: 2.0,
+    duration: 3.0,
     ease: "power2.out"
 }, "scene0")
     .to(heroGroup.rotation, {
         x: 0.05,
         y: isMobile ? -0.1 : -0.8,
         z: 0.0,
-        duration: 2.0,
+        duration: 3.0,
         ease: "power2.inOut"
     }, "scene0")
     .to(camera.position, {
         x: 0,
         y: 1.5,
-        z: isMobile ? 12 : 9, // Further zoom on mobile
-        duration: 2.0,
+        z: isMobile ? 12 : 9,
+        duration: 3.0,
         ease: "power2.inOut"
     }, "scene0")
     // 4. Reveal Text - STAGGERED
@@ -1060,54 +993,78 @@ tl.to(heroGroup.position, {
     ], {
         y: 0,
         opacity: 1,
-        duration: 1.0,
-        stagger: 0.1,
+        duration: 2.0,
+        stagger: 0.3,
         ease: "power2.out"
     }, "scene0+=0.5");
 
-// --- Scroll Spacer (Pause) ---
-// Add a dummy tween to keep the state for a bit of scrolling
-tl.to({}, { duration: 0.5 }, ">");
+// --- Scroll Spacer (Tightened Pause) ---
+tl.to({}, { duration: 1.0 }, ">");
 
-// Scene 0.5: Mascot (Right) -> center (For "Truth of Winter")
-// Move Sleigh to Center
-tl.to(heroGroup.position, {
-    x: 0, // Center
-    y: 0.5, // Slightly lower
-    z: 0, // Keep distance (was 2 which was too close)
-    duration: 1.5,
-    ease: "power2.inOut"
+// Scene 0.5: Mascot (Right) -> center (For "Trillion Dollar Gap")
+// 1. Hide Mascot Showcase Content
+tl.to([
+    "#mascot-showcase .hero-lead-in",
+    "#mascot-showcase .hero-main-title",
+    "#mascot-showcase .christmas-subtitle",
+    "#mascot-showcase .premium-btn"
+], {
+    opacity: 0,
+    y: -30,
+    duration: 1.0,
+    ease: "power2.in"
 }, "sceneCenter")
+    // 2. Move Sleigh to Center (Prevent overlap)
+    .to(heroGroup.position, {
+        x: 0, // Center
+        y: isMobile ? -2.0 : 0.5, // Move down significantly on mobile
+        z: 0,
+        duration: 1.5,
+        ease: "power2.inOut"
+    }, "sceneCenter")
     .to(heroGroup.rotation, {
-        x: 0.05, // Slight tilt down to see more
-        y: -0.2, // Slight angle is better than flat 0
+        x: 0.05,
+        y: -0.2,
         z: 0.0,
         duration: 1.5,
         ease: "power2.inOut"
     }, "sceneCenter")
     .to(camera.position, {
         x: 0,
-        y: 1.5, // Keep eye level
-        z: 11, // Pull back to see full model (was 7)
+        y: 1.5,
+        z: 11,
         duration: 1.5
-    }, "sceneCenter");
+    }, "sceneCenter")
+    // 3. Reveal Section 3: Trillion Dollar Gap Content
+    .to("#hero .hero-content", {
+        opacity: 1,
+        y: 0,
+        duration: 1.0,
+        ease: "power2.out"
+    }, "sceneCenter+=0.8");
 
-// Pause again for "Truth of Winter" reading
-tl.to({}, { duration: 1.0 }, ">");
+// Pause for Section 3 reading (Tightened)
+tl.to({}, { duration: 0.8 }, ">");
 
 // Scene 1: Hero -> Crystalline Network (Curtain Transition)
 const leftCurtain = document.querySelector('.curtain-left');
 const rightCurtain = document.querySelector('.curtain-right');
 
-tl.to(camera.position, {
-    x: 0,
-    y: 0,
-    z: 10,
-    duration: isMobile ? 0 : 0.5,
-    ease: "expo.in"
+tl.to("#hero .hero-content", {
+    opacity: 0,
+    y: -30,
+    duration: 0.6,
+    ease: "power2.in"
 }, "scene1")
+    .to(camera.position, {
+        x: 0,
+        y: 0,
+        z: 10,
+        duration: isMobile ? 0 : 0.5,
+        ease: "expo.in"
+    }, "scene1+=0.2")
     // Hide Particles
-    .to([softSnowMat, dustMat, starsMat], { opacity: 0, duration: isMobile ? 0 : 0.5 }, "scene1")
+    .to([softSnowMat, dustMat, starsMat], { opacity: 0, duration: isMobile ? 0 : 0.5 }, "scene1+=0.2")
     // Close Curtains
     .to([leftCurtain, rightCurtain], {
         scaleX: isMobile ? 0 : 1,
@@ -1133,26 +1090,29 @@ tl.to(camera.position, {
     // Open Curtains
     .to([leftCurtain, rightCurtain], { scaleX: 0, duration: isMobile ? 0 : 0.8, ease: "circ.inOut" }, "scene1+=1.2")
 
-    // Reveal Crystal Orb
-    .to(crystalGroup.position, { x: isMobile ? 0 : -6, duration: 0 }, "scene1+=1.5")
+    // --- PAUSE: Short break after curtains open ---
+    .to({}, { duration: 1.0 }, "scene1+=1.8")
+
+    // Reveal Crystal Orb (Tighter Reveal)
+    .to(crystalGroup.position, { x: isMobile ? 0 : -6, duration: 0 }, "scene1+=2.8")
     .to(crystalGroup.scale, {
         x: isMobile ? 0 : 1, y: isMobile ? 0 : 1, z: isMobile ? 0 : 1,
-        duration: isMobile ? 0 : 1.5,
+        duration: 1.0,
         ease: "back.out(1.2)"
-    }, "scene1+=1.5")
+    }, "scene1+=2.8")
 
     // Restore Particles
-    .to(softSnowMat, { opacity: 0.7, duration: isMobile ? 0 : 1.5 }, "scene1+=1.5")
-    .to(dustMat, { opacity: 0.5, duration: isMobile ? 0 : 1.5 }, "scene1+=1.5")
-    .to(starsMat, { opacity: 0.8, duration: isMobile ? 0 : 1.5 }, "scene1+=1.5")
+    .to(softSnowMat, { opacity: 0.7, duration: 1.0 }, "scene1+=2.8")
+    .to(dustMat, { opacity: 0.5, duration: 1.0 }, "scene1+=2.8")
+    .to(starsMat, { opacity: 0.8, duration: 1.0 }, "scene1+=2.8")
 
     // Reveal Crystalline Content
     .to("#crystalline-network .content-block", {
         opacity: isMobile ? 0 : 1,
         y: 0,
-        duration: isMobile ? 0 : 1.0,
+        duration: 1.0,
         ease: "power2.out"
-    }, "scene1+=1.5");
+    }, "scene1+=3.0");
 
 
 
@@ -1186,21 +1146,21 @@ tl.to(camera.position, {
         duration: isMobile ? 0 : 0.3
     }, "scene2+=1.3")
 
-    // Reveal Forge Content
-    .to("#model-factory-forge .content-block", {
-        opacity: isMobile ? 0 : 1,
-        y: 0,
-        duration: isMobile ? 0 : 1.0,
-        ease: "power2.out"
-    }, "scene2+=1.0");
+// // Reveal Forge Content
+// .to("#model-factory-forge .content-block", {
+//     opacity: isMobile ? 0 : 1,
+//     y: 0,
+//     duration: isMobile ? 0 : 1.0,
+//     ease: "power2.out"
+// }, "scene2+=1.0");
 
 
 
-// --- NEW SECTION: GIFT TEASER (Scene 2.5) ---
-tl.to({}, { duration: 0.5 }, ">") // Pause
+// --- QUICK TRANSITION: Forge to Teaser ---
+tl.to({}, { duration: 0.3 }, ">")
 
     // 1. Hide Forge Content
-    .to("#model-factory-forge .content-block", { opacity: 0, y: -20, duration: 0.5 }, "sceneTeaser")
+    // .to("#model-factory-forge .content-block", { opacity: 0, y: -20, duration: 0.5 }, "sceneTeaser")
     // Hide Forge 3D
     .to(forgeGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 }, "sceneTeaser")
     // HIDE HERO (SANTA) ON MOBILE - Ensure it doesn't linger
@@ -1222,8 +1182,8 @@ tl.to({}, { duration: 0.5 }, ">") // Pause
         ease: "power2.out"
     }, "sceneTeaser+=0.5")
 
-    // Pause for reading
-    .to({}, { duration: 1.5 })
+    // Pause for reading (Tightened)
+    .to({}, { duration: 1.0 })
 
     // 3. Hide Teaser Text
     .to("#gift-teaser .teaser-glass-container", {
@@ -1236,33 +1196,33 @@ tl.to({}, { duration: 0.5 }, ">") // Pause
 // Scene 3: Teaser -> Gift (SPLIT VIEW)
 // Gift Box at (-15, 2.0, -5) -> We will frame it on the LEFT
 tl.to(camera.position, {
-    x: isMobile ? -5 : -5,
+    x: isMobile ? 0 : -5,
     y: isMobile ? 3.0 : 2.0,
     z: isMobile ? 18 : 12,
-    duration: 1.5,
+    duration: 1.0,
     ease: "power2.inOut"
 }, "scene3")
-    // Hide Forge/Teaser if not already hidden
-    .to(forgeGroup.scale, { x: 0, y: 0, z: 0, duration: 0.5 }, "scene3")
+    // Hide Forge/Teaser swiftly
+    .to(forgeGroup.scale, { x: 0, y: 0, z: 0, duration: 0.3 }, "scene3")
     .to(cameraTarget, {
-        x: isMobile ? -5 : -5,
+        x: isMobile ? 0 : -5,
         y: isMobile ? 1.0 : 2.0,
         z: -5,
-        duration: 1.5,
+        duration: 1.0,
         ease: "power2.inOut"
     }, "scene3")
 
-    // Reveal Gift Box
-    .to(giftGroup.scale, { x: 1, y: 1, z: 1, duration: 1.0 }, "scene3")
+    // Reveal Gift Box (Starts sooner)
+    .to(giftGroup.scale, { x: 1, y: 1, z: 1, duration: 0.8 }, "scene3+=0.2")
 
-    // Reveal Gift Content - Staggered (ON THE RIGHT)
+    // Reveal Gift Content
     .to("#artifact-reveal .center-content h2, #artifact-reveal .center-content p, #artifact-reveal .center-content button, #artifact-reveal .instruction-text", {
         opacity: 1,
         y: 0,
         duration: 0.8,
-        stagger: 0.1,
+        stagger: 0.05,
         ease: "power2.out"
-    }, "scene3+=0.5");
+    }, "scene3+=0.4");
 
 
 // --- Window Resize ---
