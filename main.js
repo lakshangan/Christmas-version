@@ -964,15 +964,15 @@ const tl = gsap.timeline({
 
 // Scene 0: Video Hero -> Mascot Showcase
 tl.to(heroGroup.position, {
-    x: isMobile ? 0 : 4.0, // Move a bit more to the right
-    y: isMobile ? -1.5 : 0, // Centered vertically
+    x: isMobile ? 0 : 2.5, // Closer to center for better balance
+    y: isMobile ? -1.5 : 2.0, // Centered on vertical line of sight
     z: 0,
     duration: 3.0,
     ease: "power2.out"
 }, "scene0")
     .to(heroGroup.rotation, {
-        x: 0.05,
-        y: isMobile ? -0.1 : -0.8,
+        x: 0.1, // Slight tilt down
+        y: isMobile ? -0.1 : -0.6, // Facing screen more
         z: 0.0,
         duration: 3.0,
         ease: "power2.inOut"
@@ -980,7 +980,7 @@ tl.to(heroGroup.position, {
     .to(camera.position, {
         x: 0,
         y: 1.5,
-        z: isMobile ? 12 : 9,
+        z: isMobile ? 12 : 8.0, // Tighter zoom for cleaner framing
         duration: 3.0,
         ease: "power2.inOut"
     }, "scene0")

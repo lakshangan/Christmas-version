@@ -179,8 +179,8 @@ h3 {
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 1200px;
+    width: 60%;
+    max-width: 800px;
     padding: 1rem 2rem;
     display: flex;
     justify-content: center;
@@ -401,9 +401,8 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 5%;
+    padding: 100px 8% 4rem 8%;
     background: #000;
-    /* Fallback */
     overflow: hidden;
 }
 
@@ -467,16 +466,12 @@ footer {
     z-index: 10;
     color: white;
     text-align: left;
-    padding-right: 4rem;
-    /* Increased breathing room */
+    padding-right: 2rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
     height: 100%;
-    /* Ensure full height for centering */
-    transform: translateY(-5%);
-    /* Optical Lift */
 }
 
 .mascot-title {
