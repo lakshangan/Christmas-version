@@ -715,7 +715,7 @@ function revealGiftSequence() {
     ];
     const randomMsg = internMessages[Math.floor(Math.random() * internMessages.length)];
 
-    if (messageBody) messageBody.innerHTML = `${randomMsg}<br><br><span style="font-size: 0.8em; opacity: 0.8;">— Love, Intern Santa 🐙</span>`;
+    if (messageBody) messageBody.innerHTML = `${randomMsg}<br><br><div style="text-align: right; width: 100%; font-size: 0.8em; opacity: 0.8;">— Love, Intern Santa 🐙</div>`;
 
     const seasonGreeting = document.querySelector('.season-greeting');
     if (seasonGreeting) seasonGreeting.innerText = "Merry";

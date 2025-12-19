@@ -459,10 +459,16 @@ footer {
     z-index: 10;
     color: white;
     text-align: left;
-    padding-right: 2rem;
-    /* Matches Hero layout */
-    /* opacity: 0; REMOVED - Children handled individually now */
-    /* transform: translateY(30px); REMOVED */
+    padding-right: 4rem;
+    /* Increased breathing room */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100%;
+    /* Ensure full height for centering */
+    transform: translateY(-5%);
+    /* Optical Lift */
 }
 
 .mascot-title {
@@ -548,10 +554,9 @@ footer {
 .hero-main-title {
     font-family: 'Playfair Display', serif;
     font-weight: 500;
-    font-size: clamp(3.5rem, 8vw, 6.5rem);
     line-height: 1.1;
     color: #fff;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     letter-spacing: -0.02em;
     opacity: 0;
 }
@@ -594,12 +599,11 @@ footer {
 .christmas-subtitle {
     font-family: var(--font-body);
     font-size: 1.15rem;
-    letter-spacing: 0.02em;
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     font-weight: 300;
-    max-width: 480px;
+    max-width: 540px;
     opacity: 0;
 }
 
@@ -1017,44 +1021,51 @@ body.celebration-active .card-overlay {
     align-items: center;
     text-align: center;
     /* Adjusted padding to center text within greeting.png frame */
-    padding: 120px 40px 100px 40px;
+    /* Adjusted padding to center text within greeting.png frame and prevent bottom overlap */
+    padding: 95px 30px 150px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* Changed from center to allow manual spacing */
 }
 
 /* 1. Greeting - Subtle Elegant Script */
 .season-greeting {
     font-family: 'Great Vibes', cursive;
-    font-size: 3rem;
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+    /* Responsive */
     color: #8c734b;
     line-height: 1.1;
-    margin-bottom: 0.1rem;
+    margin-bottom: 0px;
     /* Tightened */
     text-shadow: 0 2px 0px rgba(255, 255, 255, 0.8);
     transform: rotate(-2deg);
     opacity: 0;
+    flex-shrink: 0;
 }
 
 /* 2. Sender/Title - Clean Serif */
 .sender-info {
     font-family: 'Playfair Display', serif;
     font-weight: 700;
-    font-size: 2.2rem;
-    /* Slightly smaller for space */
+    font-size: clamp(0.9rem, 1.8vw, 1.3rem);
+    /* Responsive */
     color: #1a1a1a;
     line-height: 1;
     margin-bottom: 0.5rem;
-    /* Tightened from 1.5rem */
     letter-spacing: -0.02em;
     text-transform: uppercase;
     opacity: 0;
+    flex-shrink: 0;
 }
 
 /* 3. Recipient Name */
 .recipient-box {
     margin-bottom: 1rem;
-    /* Tightened from 1.5rem */
     text-align: center;
     width: 100%;
     opacity: 0;
+    flex-shrink: 0;
 }
 
 .to-label {
@@ -1070,7 +1081,7 @@ body.celebration-active .card-overlay {
 .recipient-name {
     font-family: 'Playfair Display', serif;
     font-style: italic;
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
     /* Responsive sizing */
     color: #b30000;
     display: inline-block;
@@ -1079,31 +1090,24 @@ body.celebration-active .card-overlay {
     min-width: 180px;
     max-width: 90%;
     overflow-wrap: break-word;
-    /* Prevent overflow for long handles */
 }
 
 /* 4. Body Text */
 .santa-body {
     font-family: 'Outfit', sans-serif;
-    font-size: 1.05rem;
-    /* Slightly larger for warmth */
+    font-size: clamp(0.85rem, 1.1vw, 1rem);
+    /* Responsive text */
     color: #333;
-    /* Darker for better contrast on cream */
-    line-height: 1.6;
-    /* More breathing room */
-    max-width: 85%;
-    /* Use more width for longer messages */
+    line-height: 1.5;
+    max-width: 90%;
     margin: 0 auto;
     font-weight: 400;
     text-align: center;
     opacity: 0;
-    /* Fully solid paper-like backing to hide background particles */
-    background: #ffffff;
-    backdrop-filter: none;
-    /* No blur needed if solid */
-    padding: 20px 25px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    /* Box styling removed to reveal card design */
+    background: transparent;
+    padding: 0 10px;
+    margin-bottom: auto;
 }
 
 /* Hide Footer Decor */
