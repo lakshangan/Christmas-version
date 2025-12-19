@@ -699,7 +699,7 @@ function revealGiftSequence() {
     const internMessages = [
         `"Wishing you a very well and beautiful Christmas, ${userName}. We hope you enjoy this magical day with your family and loved ones, creating memories that last forever. May the coming New Year bring you endless joy and success."`,
         `"Merry Christmas to you and your family, ${userName}! May your home be filled with laughter, your heart with love, and your life with the warmth of the holiday season. We can't wait to see what amazing things we'll achieve together in 2026."`,
-        `"Sending you our warmest wishes this holiday season, ${userName}. May the peace and joy of Christmas stay with you throughout the New Year. Thank you for being such an incredible part of our journey—here's to a bright year ahead!"`,
+        `"Sending you our warmest wishes this holiday season, ${userName}. May the peace and joy of Christmas stay with you throughout the New Year. Thank you for being such an incredible part of our journey here's to a bright year ahead!"`,
         `"To our wonderful ${userName}, we wish you a Christmas filled with wonder and a New Year overflowing with possibility. Take this time to cherish those closest to you and recharge for a spectacular year. You deserve the very best this season!"`,
         `"Happy Holidays, ${userName}! May your Christmas be as bright as the northern star and your New Year as promising as a fresh snowfall. We hope you have a relaxing time with family, filled with good food and even better company."`,
         `"Warmest thoughts and best wishes for a wonderful Christmas, ${userName}. May you find joy in the little things and peace in the quiet moments with family. Here's to a healthy, happy, and prosperous 2026 for all of us."`,
@@ -715,7 +715,7 @@ function revealGiftSequence() {
     ];
     const randomMsg = internMessages[Math.floor(Math.random() * internMessages.length)];
 
-    if (messageBody) messageBody.innerHTML = `${randomMsg}<br><br><span style="font-size: 0.8em; opacity: 0.8;">— Love, OpenLedger Intern Santa 🎅</span>`;
+    if (messageBody) messageBody.innerHTML = `${randomMsg}<br><br><span style="font-size: 0.8em; opacity: 0.8;">— Love, Intern Santa 🐙</span>`;
 
     const seasonGreeting = document.querySelector('.season-greeting');
     if (seasonGreeting) seasonGreeting.innerText = "Merry";
