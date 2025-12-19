@@ -556,66 +556,81 @@ function interactOctopus() {
     });
 }
 
-// --- confetti logic ---
-const confettiGeo = new THREE.BufferGeometry();
-const confettiCount = 200;
-const confettiPos = new Float32Array(confettiCount * 3);
-const confettiVel = [];
-for (let i = 0; i < confettiCount; i++) {
-    confettiPos[i * 3] = 0; confettiPos[i * 3 + 1] = 0; confettiPos[i * 3 + 2] = 0;
-    confettiVel.push(new THREE.Vector3(
-        (Math.random() - 0.5) * 0.5,
-        (Math.random() - 0.5) * 0.5 + 0.5, // Upward bias
-        (Math.random() - 0.5) * 0.5
-    ));
-}
-confettiGeo.setAttribute('position', new THREE.BufferAttribute(confettiPos, 3));
-const confettiMat = new THREE.PointsMaterial({
-    color: 0xffd700,
-    size: 0.15,
+// --- 3D Confetti Logic (Vibrant Colorful Bits) ---
+const confettiCount = 800;
+const confettiProto = new THREE.PlaneGeometry(0.15, 0.25);
+const confettiMat = new THREE.MeshBasicMaterial({
+    side: THREE.DoubleSide,
     transparent: true,
-    opacity: 0
+    opacity: 0,
+    vertexColors: false // Using setColorAt instead
 });
-const confettiSystem = new THREE.Points(confettiGeo, confettiMat);
-giftGroup.add(confettiSystem);
+const confettiMesh = new THREE.InstancedMesh(confettiProto, confettiMat, confettiCount);
+giftGroup.add(confettiMesh);
+
+const confettiData = [];
+const palette = [0xff0055, 0x00ff44, 0x0088ff, 0xffff00, 0xff00ff, 0xffffff];
+const dummyMatrix = new THREE.Matrix4();
+const dummyColor = new THREE.Color();
+
+for (let i = 0; i < confettiCount; i++) {
+    // Random Color
+    dummyColor.setHex(palette[Math.floor(Math.random() * palette.length)]);
+    confettiMesh.setColorAt(i, dummyColor);
+
+    confettiData.push({
+        pos: new THREE.Vector3(0, 0, 0),
+        vel: new THREE.Vector3(
+            (Math.random() - 0.5) * 1.0,
+            (Math.random() * 1.5), // Upward initial burst
+            (Math.random() - 0.5) * 1.0
+        ),
+        rot: new THREE.Euler(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI),
+        rVel: new THREE.Euler(Math.random() * 0.2, Math.random() * 0.2, Math.random() * 0.2),
+        scale: 1.0
+    });
+}
+confettiMesh.instanceMatrix.needsUpdate = true;
 let animatingConfetti = false;
 
 function explodeConfetti() {
     animatingConfetti = true;
     confettiMat.opacity = 1;
-    const positions = confettiSystem.geometry.attributes.position.array;
 
-    // Reset positions to center of gift
+    // Reset data
     for (let i = 0; i < confettiCount; i++) {
-        positions[i * 3] = 0;
-        positions[i * 3 + 1] = 0;
-        positions[i * 3 + 2] = 0;
-        // Reset velocities roughly
-        confettiVel[i].set(
-            (Math.random() - 0.5) * 10,
-            (Math.random() * 10),
-            (Math.random() - 0.5) * 10
+        confettiData[i].pos.set(0, 0, 0);
+        confettiData[i].vel.set(
+            (Math.random() - 0.5) * 12,
+            (Math.random() * 12) + 5,
+            (Math.random() - 0.5) * 12
         );
+        confettiData[i].scale = 1.0;
     }
 
-    confettiSystem.geometry.attributes.position.needsUpdate = true;
-
-    // Animate via GSAP ticker or simple loop in main animate
-    // For simplicity, let's use a quick tween-like object to drive the update in the main loop
     let dummy = { t: 0 };
     gsap.to(dummy, {
         t: 1,
-        duration: 2.0,
+        duration: 2.5,
         onUpdate: () => {
-            const positions = confettiSystem.geometry.attributes.position.array;
             for (let i = 0; i < confettiCount; i++) {
-                positions[i * 3] += confettiVel[i].x * 0.1;
-                positions[i * 3 + 1] += confettiVel[i].y * 0.1;
-                positions[i * 3 + 2] += confettiVel[i].z * 0.1;
+                const d = confettiData[i];
+                // Physics
+                d.pos.add(d.vel.clone().multiplyScalar(0.08));
+                d.vel.y -= 0.4; // Gravity
+                d.vel.multiplyScalar(0.98); // Drag
 
-                confettiVel[i].y -= 0.2; // Gravity
+                // Rotation
+                d.rot.x += d.rVel.x;
+                d.rot.y += d.rVel.y;
+                d.rot.z += d.rVel.z;
+
+                // Matrix Update
+                dummyMatrix.makeRotationFromEuler(d.rot);
+                dummyMatrix.setPosition(d.pos);
+                confettiMesh.setMatrixAt(i, dummyMatrix);
             }
-            confettiSystem.geometry.attributes.position.needsUpdate = true;
+            confettiMesh.instanceMatrix.needsUpdate = true;
         },
         onComplete: () => {
             gsap.to(confettiMat, { opacity: 0, duration: 0.5 });
@@ -1520,59 +1535,60 @@ function initSprinklers() {
 window.addEventListener('resize', initSprinklers);
 initSprinklers();
 
-class Ribbon {
+class ConfettiParticle {
     constructor() {
         this.reset();
     }
-    reset() {
-        this.x = sWidth / 2;
-        this.y = sHeight / 2;
+    reset(side) {
+        // Randomize burst origin based on side
+        const isLeft = side === 'left' || (side === undefined && Math.random() > 0.5);
+        this.x = isLeft ? 0 : sWidth;
+        this.y = sHeight * 0.7; // Lower burst
+
         // Stronger initial burst
-        const angle = Math.random() * Math.PI * 2;
-        const force = 10 + Math.random() * 15;
+        const force = 15 + Math.random() * 20;
+        const angle = isLeft ? (Math.random() * -Math.PI / 3) : (Math.PI + Math.random() * Math.PI / 3);
+
         this.vx = Math.cos(angle) * force;
-        this.vy = Math.sin(angle) * force - 5; // Upward bias
-        this.grav = 0.25;
-        this.friction = 0.98;
-        // Christmas palette: Deep Red, Gold, White, Icy Blue
-        this.color = [`#c41e3a`, `#ffd700`, `#ffffff`, `#00f2ff`][Math.floor(Math.random() * 4)];
-        this.history = [];
-        this.maxHistory = 20; // Longer ribbons
+        this.vy = Math.sin(angle) * force - 10; // Upward bias
+
+        this.grav = 0.3;
+        this.friction = 0.96;
+
+        // Vibrant Palette matching the user image
+        this.color = [`#ff0055`, `#00ff44`, `#0088ff`, `#ffff00`, `#ff00ff`, `#ffffff`][Math.floor(Math.random() * 6)];
+
         this.life = 1.0;
         this.decay = 0.005 + Math.random() * 0.01;
-        this.width = 3 + Math.random() * 4;
+        this.width = 10 + Math.random() * 15;
+        this.height = 5 + Math.random() * 10;
+        this.angle = Math.random() * Math.PI * 2;
+        this.angleVel = (Math.random() - 0.5) * 0.3;
     }
     update() {
-        this.history.unshift({ x: this.x, y: this.y });
-        if (this.history.length > this.maxHistory) this.history.pop();
-
         this.vx *= this.friction;
         this.vy *= this.friction;
         this.x += this.vx;
         this.y += this.vy;
         this.vy += this.grav;
+        this.angle += this.angleVel;
         this.life -= this.decay;
 
-        if (this.life <= 0) this.reset();
+        if (this.life <= 0 && sprinklerActive) this.reset();
     }
     draw() {
-        if (this.history.length < 2) return;
-        sCtx.beginPath();
-        sCtx.lineWidth = this.width;
-        sCtx.strokeStyle = this.color;
-        sCtx.lineCap = 'round';
-        sCtx.lineJoin = 'round';
+        sCtx.save();
+        sCtx.translate(this.x, this.y);
+        sCtx.rotate(this.angle);
+        sCtx.fillStyle = this.color;
         sCtx.globalAlpha = this.life;
-        sCtx.moveTo(this.history[0].x, this.history[0].y);
-        for (let i = 1; i < this.history.length; i++) {
-            sCtx.lineTo(this.history[i].x, this.history[i].y);
-        }
-        sCtx.stroke();
+        sCtx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
+        sCtx.restore();
     }
 }
 
-// Pre-fill ribbons
-for (let i = 0; i < 60; i++) ribbons.push(new Ribbon());
+// Pre-fill particles
+for (let i = 0; i < 150; i++) ribbons.push(new ConfettiParticle());
 
 function animateSprinklers() {
     if (!sprinklerActive) return;
@@ -1588,6 +1604,11 @@ function startCelebration() {
     sprinklerActive = true;
     document.body.classList.add('celebration-active');
     if (sprinklerCanvas) sprinklerCanvas.style.display = 'block';
+
+    // Initial burst from sides
+    ribbons.forEach((r, i) => {
+        r.reset(i < ribbons.length / 2 ? 'left' : 'right');
+    });
 
     // Play Audio
     const revealSfx = document.getElementById('reveal-sfx');
