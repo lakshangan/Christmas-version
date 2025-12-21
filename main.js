@@ -194,23 +194,15 @@ loadingManager.onLoad = () => {
             }, "<")
             .to(preloader, { opacity: 0, duration: 1.5, ease: "power2.inOut" }, "-=0.5")
 
-            // Hero Entrance (Staggered & Smooth)
-            .fromTo("#video-hero .hero-lead-in",
-                { y: 30, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
-                "-=1.0")
-            .fromTo("#video-hero .hero-main-title",
-                { y: 50, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
-                "-=1.0")
-            .fromTo("#video-hero .christmas-subtitle",
-                { y: 30, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
-                "-=0.9")
-            .fromTo("#video-hero .premium-btn",
-                { y: 30, opacity: 0 },
-                { y: 0, opacity: 1, duration: 1.2, ease: "power3.out" },
-                "-=0.9");
+            // Video Hero Entrance (Premium Reveal)
+            .to("#video-hero .text-reveal-hidden", {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 1.5,
+                stagger: 0.15,
+                ease: "power4.out"
+            }, "-=1.0");
     } else {
         // Fallback if elements missing
         if (preloader) preloader.style.display = 'none';
@@ -984,18 +976,14 @@ tl.to(heroGroup.position, {
         duration: 3.0,
         ease: "power2.inOut"
     }, "scene0")
-    // 4. Reveal Text - STAGGERED
-    .to([
-        "#mascot-showcase .hero-lead-in",
-        "#mascot-showcase .hero-main-title",
-        "#mascot-showcase .christmas-subtitle",
-        "#mascot-showcase .premium-btn"
-    ], {
-        y: 0,
+    // 4. Reveal Mascot Text (Premium Blur Reveal)
+    .to("#mascot-showcase .text-reveal-hidden", {
         opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
         duration: 2.0,
-        stagger: 0.3,
-        ease: "power2.out"
+        stagger: 0.2,
+        ease: "power3.out"
     }, "scene0+=0.5");
 
 // --- Scroll Spacer (Tightened Pause) ---
@@ -1003,14 +991,10 @@ tl.to({}, { duration: 1.0 }, ">");
 
 // Scene 0.5: Mascot (Right) -> center (For "Trillion Dollar Gap")
 // 1. Hide Mascot Showcase Content
-tl.to([
-    "#mascot-showcase .hero-lead-in",
-    "#mascot-showcase .hero-main-title",
-    "#mascot-showcase .christmas-subtitle",
-    "#mascot-showcase .premium-btn"
-], {
+tl.to("#mascot-showcase .text-reveal-hidden", {
     opacity: 0,
     y: -30,
+    filter: "blur(10px)",
     duration: 1.0,
     ease: "power2.in"
 }, "sceneCenter")
@@ -1035,12 +1019,14 @@ tl.to([
         z: 11,
         duration: 1.5
     }, "sceneCenter")
-    // 3. Reveal Section 3: Trillion Dollar Gap Content
-    .to("#hero .hero-content", {
+    // 3. Reveal Section 3 Content (Premium Blur Reveal)
+    .to("#hero .text-reveal-hidden", {
         opacity: 1,
         y: 0,
-        duration: 1.0,
-        ease: "power2.out"
+        filter: "blur(0px)",
+        duration: 1.5,
+        stagger: 0.2,
+        ease: "power3.out"
     }, "sceneCenter+=0.8");
 
 // Pause for Section 3 reading (Tightened)
@@ -1050,9 +1036,10 @@ tl.to({}, { duration: 0.8 }, ">");
 const leftCurtain = document.querySelector('.curtain-left');
 const rightCurtain = document.querySelector('.curtain-right');
 
-tl.to("#hero .hero-content", {
+tl.to("#hero .text-reveal-hidden", {
     opacity: 0,
     y: -30,
+    filter: "blur(10px)",
     duration: 0.6,
     ease: "power2.in"
 }, "scene1")
@@ -1106,12 +1093,14 @@ tl.to("#hero .hero-content", {
     .to(dustMat, { opacity: 0.5, duration: 1.0 }, "scene1+=2.8")
     .to(starsMat, { opacity: 0.8, duration: 1.0 }, "scene1+=2.8")
 
-    // Reveal Crystalline Content
-    .to("#crystalline-network .content-block", {
-        opacity: isMobile ? 0 : 1,
+    // Reveal Crystalline Content (Premium Blur Reveal)
+    .to("#crystalline-network .text-reveal-hidden", {
+        opacity: 1,
         y: 0,
-        duration: 1.0,
-        ease: "power2.out"
+        filter: "blur(0px)",
+        duration: 1.5,
+        stagger: 0.2,
+        ease: "power3.out"
     }, "scene1+=3.0");
 
 
@@ -1174,21 +1163,24 @@ tl.to({}, { duration: 0.3 }, ">")
         ease: "power2.inOut"
     }, "sceneTeaser")
 
-    // 2. Reveal Teaser Text
-    .to("#gift-teaser .teaser-glass-container", {
+    // 2. Reveal Teaser Text - PREMIUM
+    .to("#gift-teaser .text-reveal-hidden", {
         opacity: 1,
         y: 0,
-        duration: 1.0,
-        ease: "power2.out"
+        filter: "blur(0px)",
+        duration: 1.5,
+        stagger: 0.2,
+        ease: "power3.out"
     }, "sceneTeaser+=0.5")
 
     // Pause for reading (Tightened)
     .to({}, { duration: 1.0 })
 
     // 3. Hide Teaser Text
-    .to("#gift-teaser .teaser-glass-container", {
+    .to("#gift-teaser .text-reveal-hidden", {
         opacity: 0,
         y: -20,
+        filter: "blur(10px)",
         duration: 0.5
     }, "sceneTeaserEnd");
 
@@ -1215,15 +1207,38 @@ tl.to(camera.position, {
     // Reveal Gift Box (Starts sooner)
     .to(giftGroup.scale, { x: 1, y: 1, z: 1, duration: 0.8 }, "scene3+=0.2")
 
-    // Reveal Gift Content
-    .to("#artifact-reveal .center-content h2, #artifact-reveal .center-content p, #artifact-reveal .center-content button, #artifact-reveal .instruction-text", {
+    // Reveal Gift Content (Premium Blur Reveal)
+    .to("#artifact-reveal .text-reveal-hidden", {
         opacity: 1,
         y: 0,
-        duration: 0.8,
-        stagger: 0.05,
-        ease: "power2.out"
+        filter: "blur(0px)",
+        duration: 1.5,
+        stagger: 0.2,
+        ease: "power3.out"
     }, "scene3+=0.4");
 
+
+// --- Global Section Text Revealer ---
+gsap.utils.toArray('.text-reveal-hidden').forEach((el) => {
+    // Skip video hero as it's handled by intro timeline
+    if (el.closest('#video-hero')) return;
+
+    const section = el.closest('section');
+    ScrollTrigger.create({
+        trigger: section || el,
+        start: "top 95%", // Fire as soon as it enters 5% from bottom
+        onEnter: () => {
+            gsap.to(el, {
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                duration: 1.2,
+                ease: "power3.out"
+            });
+        },
+        once: true // Only animate once
+    });
+});
 
 // --- Window Resize ---
 window.addEventListener('resize', () => {
@@ -1244,6 +1259,20 @@ gsap.ticker.add((time) => {
     lenis.raf(time * 1000);
 });
 gsap.ticker.lagSmoothing(0);
+
+// --- General Smooth Scroll for all anchors ---
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+        const targetId = anchor.getAttribute('href');
+        if (targetId !== '#' && document.querySelector(targetId)) {
+            e.preventDefault();
+            lenis.scrollTo(targetId, {
+                duration: 2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+            });
+        }
+    });
+});
 
 
 // --- Animation Loop ---
@@ -1328,16 +1357,42 @@ function animate(time) {
 }
 requestAnimationFrame(animate);
 
-// --- Navbar Scroll Logic ---
+// --- Navbar Interactivity ---
 const nav = document.querySelector('.glass-nav');
+const logo = document.querySelector('.logo');
+
 if (nav) {
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            nav.classList.add('scrolled');
-        } else {
-            nav.classList.remove('scrolled');
-        }
+        if (window.scrollY > 50) nav.classList.add('scrolled');
+        else nav.classList.remove('scrolled');
     });
+
+    // Magnetic Hover Effect for Logo
+    if (logo) {
+        logo.addEventListener('mousemove', (e) => {
+            const rect = logo.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const deltaX = e.clientX - centerX;
+            const deltaY = e.clientY - centerY;
+
+            gsap.to(logo, {
+                x: deltaX * 0.2,
+                y: deltaY * 0.2,
+                duration: 0.4,
+                ease: "power2.out"
+            });
+        });
+
+        logo.addEventListener('mouseleave', () => {
+            gsap.to(logo, {
+                x: 0,
+                y: 0,
+                duration: 0.6,
+                ease: "elastic.out(1, 0.3)"
+            });
+        });
+    }
 }
 
 // --- Interactive Teaser Logic ---

@@ -38,8 +38,23 @@
       <button onclick="this.parentElement.style.display='none'">&times;</button>
     </div>
     <nav class="glass-nav">
-      <div class="logo">OPENLEDGER</div>
-
+      <div class="nav-decoration snow-overlay"></div>
+      <div class="nav-decoration lights-container">
+        <span class="light red"></span>
+        <span class="light gold"></span>
+        <span class="light green"></span>
+        <span class="light gold"></span>
+        <span class="light red"></span>
+        <span class="light gold"></span>
+        <span class="light green"></span>
+        <span class="light red"></span>
+        <span class="light gold"></span>
+        <span class="light green"></span>
+      </div>
+      <div class="logo">
+        OPENLEDGER
+        <span class="logo-festive-icon highlight">🎄</span>
+      </div>
     </nav>
 
     <div class="transition-curtain curtain-left"></div>
@@ -55,11 +70,13 @@
 
       <div class="highlight-container">
         <div class="highlight-text-col">
-          <h2 class="hero-lead-in">This Christmas we gift you</h2>
-          <h1 class="hero-main-title">The Fair <span class="gold-text-premium">AI</span></h1>
-          <p class="christmas-subtitle">Celebrate the season with the future of fair AI. OpenLedger delivers trust,
+          <h2 class="hero-lead-in text-reveal-hidden">This Christmas we gift you</h2>
+          <h1 class="hero-main-title text-reveal-hidden">The Fair <span
+              class="gold-text-premium gold-glow-accent">AI</span></h1>
+          <p class="christmas-subtitle text-reveal-hidden">Celebrate the season with the future of fair AI. OpenLedger
+            delivers trust,
             transparency, and joy this holiday.</p>
-          <a href="#mascot-showcase" class="premium-btn"> Open your gift</a>
+          <a href="#artifact-reveal" class="premium-btn text-reveal-hidden" id="hero-open-gift-btn"> Open your gift</a>
         </div>
         <div class="highlight-spacer-col"></div>
       </div>
@@ -70,9 +87,11 @@
       <div class="transition-shutter"></div>
       <div class="highlight-container">
         <div class="mascot-text-col">
-          <h1 class="hero-main-title" style="font-size: clamp(2.5rem, 8vw, 4.5rem);">Fair, Verifiable <span
-              class="gold-text-premium">AI</span> for All</h1>
-          <p class="christmas-subtitle">AI shouldn't be a black box. OpenLedger is building a future of verifiable
+          <h1 class="hero-main-title text-reveal-hidden" style="font-size: clamp(2.5rem, 8vw, 4.5rem);">Fair, Verifiable
+            <span class="gold-text-premium gold-glow-accent">AI</span> for All
+          </h1>
+          <p class="christmas-subtitle text-reveal-hidden">AI shouldn't be a black box. OpenLedger is building a future
+            of verifiable
             intelligence where every output is transparent, provable, and trustworthy. This holiday, we deliver AI that
             truly belongs to everyone.</p>
         </div>
@@ -82,9 +101,10 @@
 
     <section class="hero-section" id="hero">
       <div class="hero-content">
-        <!-- <h2 class="hero-lead-in" style="opacity: 1;">PEEL BACK THE WRAPPING</h2> -->
-        <h1 class="cinematic-title">THE <span class="gold-text">TRILLION-DOLLAR</span> GAP</h1>
-        <div class="hero-story-text" style="text-align: center; max-width: 600px; margin: 0 auto 3rem auto;">
+        <h1 class="cinematic-title text-reveal-hidden">THE <span
+            class="gold-text gold-glow-accent">TRILLION-DOLLAR</span> GAP</h1>
+        <div class="hero-story-text text-reveal-hidden"
+          style="text-align: center; max-width: 600px; margin: 0 auto 3rem auto;">
           <p style="line-height: 1.8; color: rgba(255, 255, 255, 0.9);">Almost $1 trillion has already flowed into AI
             across data, models, compute, and infrastructure. And this is still early. But there’s a gap; capital moves
             freely, value doesn’t. Today’s AI runs through closed pipes—centralized data, permissioned models, and value
@@ -97,8 +117,9 @@
 
     <section class="crystal-section" id="crystalline-network">
       <div class="content-block right">
-        <h2>The Christmas Chain of AI</h2>
-        <p>“This Christmas, OpenLedger lights up the AI world with a transparent, secure network where every node works
+        <h2 class="text-reveal-hidden">The Christmas <span class="gold-glow-accent">Chain</span> of AI</h2>
+        <p class="text-reveal-hidden">“This Christmas, OpenLedger lights up the AI world with a transparent, secure
+          network where every node works
           together fast, open, and unstoppable.”</p>
       </div>
     </section>
@@ -134,11 +155,11 @@
             <span class="load-index">01</span>
           </div>
 
-          <h1 class="teaser-title">
+          <h1 class="teaser-title text-reveal-hidden">
             A SPECIAL <br>
-            <span class="shimmer-gold">DELIVERY</span>
-            <span class="shimmer-gold">FOR</span>
-            <span class="shimmer-gold">you</span>
+            <span class="shimmer-gold gold-glow-accent">DELIVERY</span>
+            <span class="shimmer-gold gold-glow-accent">FOR</span>
+            <span class="shimmer-gold gold-glow-accent">YOU</span>
           </h1>
 
           <div class="teaser-details">
@@ -169,12 +190,14 @@
       <div class="card-overlay"></div>
       <canvas id="party-sprinklers"></canvas>
 
-      <div class="center-content" id="santa-instruction">
-        <h2>Unwrap your gift</h2>
-        <p style="max-width: 600px; margin: 1rem auto; line-height: 1.6;">"The best gifts are the ones you truly own.
+      <div class="center-content">
+        <h2 id="santa-instruction" class="text-reveal-hidden" style="margin-bottom: 1.5rem;">Unwrap your gift</h2>
+        <p class="text-reveal-hidden" style="max-width: 600px; margin: 1rem auto; line-height: 1.6;">"The best gifts are
+          the ones you truly own.
           We're building a future where data is yours and AI is trusted. Thank you for being part of the OpenLedger
           family. Go ahead, open it up, this one's for you."</p>
-        <button id="claim-stake-btn" class="premium-btn" style="margin-top: 1rem; opacity: 1;">Open your gift</button>
+        <button id="claim-stake-btn" class="premium-btn text-reveal-hidden" style="margin-top: 1.5rem;">Open your
+          gift</button>
       </div>
 
       <!-- 1. Username Modal (Restored) -->
