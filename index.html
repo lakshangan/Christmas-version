@@ -89,6 +89,13 @@
         </div>
         <div class="highlight-spacer-col"></div>
       </div>
+      <div class="scroll-down-indicator"
+        onclick="document.getElementById('mascot-showcase').scrollIntoView({behavior: 'smooth'})">
+        <p class="scroll-text">Scroll Down</p>
+        <span class="arrow"></span>
+        <span class="arrow"></span>
+        <span class="arrow"></span>
+      </div>
     </section>
 
     <!-- Section 2: 3D Mascot Showcase (Camera Angle Restored) -->
@@ -218,6 +225,7 @@
           <div class="input-wrapper">
             <label for="username-input" class="input-label">RECIPIENT NAME</label>
             <input type="text" id="username-input" placeholder="e.g. Elon or @handle" autocomplete="off" maxlength="25">
+            <p id="input-error" class="input-error-msg">Please enter a valid name</p>
           </div>
 
           <button id="submit-name-btn" class="reveal-btn">REVEAL MY GIFT</button>

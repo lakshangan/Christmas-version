@@ -862,14 +862,68 @@ setTimeout(() => {
     const modal = document.getElementById('username-modal');
 
     if (submitNameBtn && usernameInput) {
+        const validateInput = () => {
+            const val = usernameInput.value.trim();
+            const errorMsg = document.getElementById('input-error');
+
+            // Reset State
+            usernameInput.classList.remove('input-invalid');
+            if (errorMsg) errorMsg.classList.remove('visible');
+
+            // 1. Check Empty
+            if (!val) {
+                showError("Please enter your name.");
+                return false;
+            }
+
+            // 2. Check Min Length
+            if (val.length < 2) {
+                showError("Name is too short.");
+                return false;
+            }
+
+            // 3. Check Characters (Alphanumeric + spaces + @ . - _)
+            // Regex: Allows letters, numbers, spaces, and specifically @, ., -, _
+            const validRegex = /^[a-zA-Z0-9\s@._-]+$/;
+            if (!validRegex.test(val)) {
+                showError("Special characters not allowed (except @ . - _).");
+                return false;
+            }
+
+            // 4. Basic Profanity Filter (Client-side)
+            const badWords = ['admin', 'null', 'undefined', 'test', 'fuck', 'shit', 'ass', 'bitch', 'damn', 'crap'];
+            if (badWords.some(word => val.toLowerCase().includes(word))) {
+                showError("Please enter a professional name.");
+                return false;
+            }
+
+            return true;
+        };
+
+        const showError = (msg) => {
+            const errorMsg = document.getElementById('input-error');
+            const input = document.getElementById('username-input');
+            if (errorMsg) {
+                errorMsg.innerText = msg;
+                errorMsg.classList.add('visible');
+            }
+            if (input) {
+                input.classList.add('input-invalid');
+                // Remove animation class after it plays to allow re-trigger
+                setTimeout(() => input.classList.remove('input-invalid'), 500);
+            }
+        };
+
+        const submitName = () => {
+            if (validateInput()) {
+                userName = usernameInput.value.trim();
+                revealGiftSequence();
+            }
+        };
+
         submitNameBtn.onclick = (e) => {
             e.stopPropagation();
-            if (usernameInput.value.trim() !== "") {
-                userName = usernameInput.value.trim();
-            } else {
-                userName = "Builder";
-            }
-            revealGiftSequence();
+            submitName();
         };
 
         // Enter key support
@@ -877,13 +931,14 @@ setTimeout(() => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 e.stopPropagation();
-                if (usernameInput.value.trim() !== "") {
-                    userName = usernameInput.value.trim();
-                } else {
-                    userName = "Builder";
-                }
-                revealGiftSequence();
+                submitName();
             }
+        };
+
+        // Remove error on input
+        usernameInput.oninput = () => {
+            const errorMsg = document.getElementById('input-error');
+            if (errorMsg) errorMsg.classList.remove('visible');
         };
     }
 
